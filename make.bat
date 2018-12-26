@@ -1,1 +1,1 @@
-@python main.py
+python -u main.py

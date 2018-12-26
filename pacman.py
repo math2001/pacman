@@ -18,22 +18,26 @@ class Pacman:
 		self.x, self.y = x, y
 		# dx and dy are the direction the pacman is moving towards
 		self.dx, self.dy = dx, dy
+		# wdx and wdy are the wanted dx and dy.
+		self.wdx, self.wdy = 0, 0
 		# ax and ay are the absolute position (in pixel)
 		# note: this is the top-left corner of the image
 		self.ax, self.ay = x * TILE_SIZE, y * TILE_SIZE
+
+
 
 		# the representation of the map
 		self.plan = plan
 
 	def handle_keydown(self, e):
 		if e.key in (K_UP, K_w):
-			self.dx, self.dy = 0, -1
+			self.wdx, self.wdy = 0, -1
 		elif e.key in (K_DOWN, K_s):
-			self.dx, self.dy = 0, 1
+			self.wdx, self.wdy = 0, 1
 		elif e.key in (K_LEFT, K_a):
-			self.dx, self.dy = -1, 0
+			self.wdx, self.wdy = -1, 0
 		elif e.key in (K_RIGHT, K_d):
-			self.dx, self.dy = 1, 0
+			self.wdx, self.wdy = 1, 0
 
 	def to_next_tile(self):
 		"""returns 0 <= x <= 1 depending on how close we are to be completely
@@ -49,16 +53,33 @@ class Pacman:
 		if it kept going in this direction"""
 		return self.plan[self.y + self.dy][self.x + self.dx]
 
+	def next_wanted_tile(self):
+		"""Same as next tile, but using self.wd[xy]"""
+		return self.plan[self.y + self.wdy][self.x + self.wdx]
+
 	def update(self):
 		self.ax += self.dx * Pacman.speed
 		self.ay += self.dy * Pacman.speed
 
 		if self.to_next_tile() == 1:
+			# update the current tile position
 			self.x += self.dx
 			self.y += self.dy
 
 		if is_blocking(self.next_tile()):
+			# stop moving
 			self.dx = self.dy = 0
+
+		if self.wdx + self.wdy != 0 and not is_blocking(self.next_wanted_tile()):
+			# there are 2 different case. Either the pacman is going in the
+			# opposite direction, in which case we can just change dy and dx,
+			# or it's turning, in which case we have to wait until we get to the
+			# next tile and *then* turn
+			if (self.dx, self.dy) == (-self.wdx, -self.wdy) \
+				or self.to_next_tile() == 0:
+				self.dx, self.dy = self.wdx, self.wdy
+				self.wdx = self.wdy = 0
+
 
 	def render(self, surface):
 		center = (self.ax + TILE_SIZE // 2,
