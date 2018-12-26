@@ -94,14 +94,10 @@ class Pacman:
 		self.ay = int(self.y * TILE_SIZE + self.dy * TILE_SIZE * rest / Pacman.fpt)
 		self.ax = int(self.x * TILE_SIZE + self.dx * TILE_SIZE * rest / Pacman.fpt)
 
-		if self.wdy + self.wdx != 0 and not is_blocking(self.next_wanted_tile()):
-			# there are 2 different case. Either the pacman is going in the
-			# opposite direction, in which case we can just change dy and dx,
-			# or it's turning, in which case we have to wait until we get to the
-			# next tile and *then* turn
-			if (self.wdx, self.wdy) == (-self.dx, -self.dy) or rest == 0:
-				self.dx, self.dy = self.wdx, self.wdy
-				self.wdx = self.wdy = 0
+		if self.wdy + self.wdx != 0 and rest == 0 \
+			and not is_blocking(self.next_wanted_tile()):
+			self.dx, self.dy = self.wdx, self.wdy
+			self.wdx = self.wdy = 0
 
 
 	def frame_based_update(self):
