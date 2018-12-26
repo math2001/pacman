@@ -37,6 +37,11 @@ class Game(Scene):
 		self.set_mode((self.tiles.width * TILE_SIZE,
 					   self.tiles.height * TILE_SIZE))
 
+		EventManager.on('toggle-pause-game', self.togglepause)
+
+	def togglepause(self):
+		self.paused = not self.paused
+
 	def handle_event(self, e):
 		super().handle_event(e)
 		if e.type == pygame.KEYDOWN:
