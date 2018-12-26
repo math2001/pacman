@@ -33,6 +33,9 @@ class Game(Scene):
 		if not self.pacman:
 			raise ValueError(f"tiles doesn't have a starting position ({START!r})")
 
+		self.set_mode((self.tiles.width * TILE_SIZE,
+					   self.tiles.height * TILE_SIZE))
+
 	def handle_event(self, e):
 		super().handle_event(e)
 		if e.type == pygame.KEYDOWN:

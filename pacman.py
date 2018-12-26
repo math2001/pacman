@@ -5,13 +5,16 @@ the direction"""
 import pygame
 from pygame.locals import *
 from utils import *
+import fractions
 
 def abs(n):
 	return n if n > 0 else -n
 
 class Pacman:
 
-	speed = 5 # pixel per frame
+	# think of it as speed = 1 / 10
+	# frames per tiles
+	fpt = 10
 
 	def __init__(self, x, y, dx, dy, tiles):
 		# x and y are the tile position
@@ -27,6 +30,8 @@ class Pacman:
 		# the representation of the map
 		self.tiles = tiles
 		self.just_tp = False
+
+		self.frame_count = 0
 
 	def handle_keydown(self, e):
 		if e.key in (K_UP, K_w):
@@ -73,6 +78,31 @@ class Pacman:
 		return self.tiles[self.y + self.wdy][self.x + self.wdx]
 
 	def update(self):
+		self.frame_count += 1
+		rest = self.frame_count % Pacman.fpt
+		# we should exactly be on a tile
+		if rest == 0:
+			self.x += self.dx
+			self.y += self.dy
+
+			if is_blocking(self.next_tile()):
+				self.dx = self.dy = 0
+
+		# set the absolute position
+		self.ay = int(self.y * TILE_SIZE + self.dy * TILE_SIZE * rest / Pacman.fpt)
+		self.ax = int(self.x * TILE_SIZE + self.dx * TILE_SIZE * rest / Pacman.fpt)
+
+		if self.wdy + self.wdx != 0 and not is_blocking(self.next_wanted_tile()):
+			# there are 2 different case. Either the pacman is going in the
+			# opposite direction, in which case we can just change dy and dx,
+			# or it's turning, in which case we have to wait until we get to the
+			# next tile and *then* turn
+			if (self.wdx, self.wdy) == (-self.dx, -self.dy) or rest == 0:
+				self.dx, self.dy = self.wdx, self.wdy
+				self.wdx = self.wdy = 0
+
+
+	def frame_based_update(self):
 
 		# moves the pacman pixel wise
 		self.ax += self.dx * Pacman.speed
