@@ -11,7 +11,7 @@ def abs(n):
 
 class Pacman:
 
-	speed = 2 # pixel per frame
+	speed = 5 # pixel per frame
 
 	def __init__(self, x, y, dx, dy, tiles):
 		# x and y are the tile position
@@ -26,6 +26,7 @@ class Pacman:
 
 		# the representation of the map
 		self.tiles = tiles
+		self.just_tp = False
 
 	def handle_keydown(self, e):
 		if e.key in (K_UP, K_w):
@@ -46,23 +47,56 @@ class Pacman:
 			difference = self.y * TILE_SIZE - self.ay
 		return abs(difference / TILE_SIZE)
 
+	def tile(self):
+		"""returns the representation of the current tile"""
+		if self.y < 0:
+			raise IndexError(f"Index should be positive, got {self.y}")
+		if self.x < 0:
+			raise IndexError(f"Index should be positive, got {self.x}")
+		return self.tiles[self.y][self.x]
+
 	def next_tile(self):
 		"""returns the next tile's representation the pacman is going to be on
 		if it kept going in this direction"""
+		if self.y + self.dy < 0:
+			raise IndexError(f"Index should be positive, got {self.y + self.dy}")
+		if self.x + self.dx < 0:
+			raise IndexError(f"Index should be positive, got {self.x + self.dx}")
 		return self.tiles[self.y + self.dy][self.x + self.dx]
 
 	def next_wanted_tile(self):
 		"""Same as next tile, but using self.wd[xy]"""
+		if self.y + self.wdy < 0:
+			raise IndexError(f"Index should be positive, got {self.y + self.wdy}")
+		if self.x + self.wdx < 0:
+			raise IndexError(f"Index should be positive, got {self.x + self.wdx}")
 		return self.tiles[self.y + self.wdy][self.x + self.wdx]
 
 	def update(self):
+
+		# moves the pacman pixel wise
 		self.ax += self.dx * Pacman.speed
 		self.ay += self.dy * Pacman.speed
 
+		# update the current tile position based on the pixel position
 		if self.to_next_tile() == 1:
-			# update the current tile position
 			self.x += self.dx
 			self.y += self.dy
+
+		if self.tile() == 't':
+			if self.just_tp:
+				self.just_tp = False
+			elif self.to_next_tile() == 0:
+				# teleport to the *other* gate
+				if self.tiles.teleports[0] == (self.x, self.y):
+					self.x, self.y = self.tiles.teleports[1]
+				else:
+					self.x, self.y = self.tiles.teleports[0]
+
+				self.ax = self.x * TILE_SIZE
+				self.ay = self.y * TILE_SIZE
+				self.just_tp = True
+			return
 
 		if is_blocking(self.next_tile()):
 			# stop moving
@@ -78,10 +112,8 @@ class Pacman:
 				self.dx, self.dy = self.wdx, self.wdy
 				self.wdx = self.wdy = 0
 
-
 	def render(self, surface):
 		center = (self.ax + TILE_SIZE // 2,
 				  self.ay + TILE_SIZE // 2)
 		pygame.draw.circle(surface, pygame.Color('yellow'), center,
 						   TILE_SIZE // 2)
-			

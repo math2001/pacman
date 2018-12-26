@@ -29,3 +29,18 @@ class EventManager:
     def emit(cls, event, *args, **kwargs):
         for func in cls.events.get(event, ()):
             func(*args, **kwargs)
+
+class Tiles(list):
+
+    @property
+    def width(self):
+        return len(self[0])
+    
+    @property
+    def height(self):
+        return len(self)
+    
+    def __getitem__(self, i):
+        if i < 0:
+            raise IndexError(f"Index should be positive, got {i}")
+        return super().__getitem__(i)

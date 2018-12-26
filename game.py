@@ -8,22 +8,30 @@ class Game(Scene):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.debug = True
-		self.tiles = []
+		self.tiles = Tiles()
+		self.tiles.teleports = []
 
-		self.height = 0
-		self.width = 0
 		self.pacman = None
 
 		with open(f'plans/original.txt') as fp:
 			dx, dy = intall(next(fp).split(','))
 			for line in fp:
-				index = line.find('s')
+				index = line.find(TELEPORT)
+				while index != -1:
+					self.tiles.teleports.append((index, self.tiles.height))
+					index = line.find(TELEPORT, index + 1)
+				index = line.find(START)
 				if index != -1:
-					self.pacman = Pacman(index, self.height, dx, dy, self.tiles)
-				self.height += 1
+					# note that height isn't the final height yet
+					self.pacman = Pacman(index, self.tiles.height, dx, dy,
+										 self.tiles)
 				self.tiles.append(list(line.strip()))
+
+		if len(self.tiles.teleports) not in (0, 2):
+			raise ValueError("tiles should have 0 or 2 teleport points, got "
+							 f"{len(self.tiles.teleports)}")
 		if not self.pacman:
-			raise ValueError("tiles doesn't have a starting position ('s')")
+			raise ValueError(f"tiles doesn't have a starting position ({START!r})")
 
 	def handle_event(self, e):
 		super().handle_event(e)
