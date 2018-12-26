@@ -12,6 +12,7 @@ class Game(Scene):
 		self.tiles.teleports = []
 
 		self.pacman = None
+		self.paused = False
 
 		with open(f'plans/original.txt') as fp:
 			dx, dy = intall(next(fp).split(','))
@@ -39,9 +40,18 @@ class Game(Scene):
 	def handle_event(self, e):
 		super().handle_event(e)
 		if e.type == pygame.KEYDOWN:
+			if e.key == pygame.K_SPACE:
+				self.paused = not self.paused
+			elif e.key == pygame.K_n and self.paused:
+				# go frame by frame
+				self.paused = False
+				self.update()
+				self.paused = True
 			self.pacman.handle_keydown(e)
 
 	def update(self):
+		if self.paused:
+			return
 		self.pacman.update()
 
 	def render(self, surface):
@@ -51,7 +61,7 @@ class Game(Scene):
 		for y, row in enumerate(self.tiles):
 			for x, char in enumerate(row):
 				if char == WALL:
-					rect = pygame.Rect((x * TILE_SIZE, y * TILE_SIZE), (20, 20))
+					rect = pygame.Rect((x * TILE_SIZE, y * TILE_SIZE), (TILE_SIZE, TILE_SIZE))
 					pygame.draw.rect(surface, pygame.Color('gray'), rect)
 
 		self.pacman.render(surface)

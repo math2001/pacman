@@ -35,7 +35,7 @@ class App:
     
     def show_debug_infos(self):
         fps = round(self.clock.get_fps())
-        text = self.font.render("{} {:2} fps ".format(self.scene.debug_string(), fps), True, pygame.Color("grey"), pygame.Color(0, 0, 0))
+        text = self.font.render(" {} {:2} fps ".format(self.scene.debug_string(), fps), True, pygame.Color("grey"), pygame.Color(0, 0, 0))
         rect = text.get_rect(bottomright=Screen.rect.bottomright)
         Screen.surface.blit(text, rect)
     
