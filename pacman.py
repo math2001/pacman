@@ -1,13 +1,11 @@
-"""The pacman is a simple interface that simply emits an event 'pacman-turn'
-with (x, y) where x and y are -1, 0 or 1, with exactly one 0. It's just to give
-the direction"""
-
 import pygame
 from pygame.locals import *
 from utils import *
 from movable import Movable
 
 class Pacman(Movable):
+
+	"""Pacman is basically a regular movable, except it can teleport"""
 
 	# think of it as speed = 1 / 10
 	# frames per tiles
