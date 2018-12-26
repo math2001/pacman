@@ -99,47 +99,6 @@ class Pacman:
 			self.dx, self.dy = self.wdx, self.wdy
 			self.wdx = self.wdy = 0
 
-
-	def frame_based_update(self):
-
-		# moves the pacman pixel wise
-		self.ax += self.dx * Pacman.speed
-		self.ay += self.dy * Pacman.speed
-
-		# update the current tile position based on the pixel position
-		if self.to_next_tile() == 1:
-			self.x += self.dx
-			self.y += self.dy
-
-		if self.tile() == 't':
-			if self.just_tp:
-				self.just_tp = False
-			elif self.to_next_tile() == 0:
-				# teleport to the *other* gate
-				if self.tiles.teleports[0] == (self.x, self.y):
-					self.x, self.y = self.tiles.teleports[1]
-				else:
-					self.x, self.y = self.tiles.teleports[0]
-
-				self.ax = self.x * TILE_SIZE
-				self.ay = self.y * TILE_SIZE
-				self.just_tp = True
-			return
-
-		if is_blocking(self.next_tile()):
-			# stop moving
-			self.dx = self.dy = 0
-
-		if self.wdx + self.wdy != 0 and not is_blocking(self.next_wanted_tile()):
-			# there are 2 different case. Either the pacman is going in the
-			# opposite direction, in which case we can just change dy and dx,
-			# or it's turning, in which case we have to wait until we get to the
-			# next tile and *then* turn
-			if (self.dx, self.dy) == (-self.wdx, -self.wdy) \
-				or self.to_next_tile() == 0:
-				self.dx, self.dy = self.wdx, self.wdy
-				self.wdx = self.wdy = 0
-
 	def render(self, surface):
 		center = (self.ax + TILE_SIZE // 2,
 				  self.ay + TILE_SIZE // 2)
