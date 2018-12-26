@@ -43,15 +43,6 @@ class Pacman:
 		elif e.key in (K_RIGHT, K_d):
 			self.wdx, self.wdy = 1, 0
 
-	def to_next_tile(self):
-		"""returns 0 <= x <= 1 depending on how close we are to be completely
-		over the next tile in one direction (since only changes at a time)"""
-		if self.dx != 0:
-			difference = self.x * TILE_SIZE - self.ax
-		else:
-			difference = self.y * TILE_SIZE - self.ay
-		return abs(difference / TILE_SIZE)
-
 	def tile(self):
 		"""returns the representation of the current tile"""
 		if self.y < 0:
@@ -80,13 +71,24 @@ class Pacman:
 	def update(self):
 		self.frame_count += 1
 		rest = self.frame_count % Pacman.fpt
-		# we should exactly be on a tile
+		# we are exactly on a tale
 		if rest == 0:
 			self.x += self.dx
 			self.y += self.dy
 
-			if is_blocking(self.next_tile()):
-				self.dx = self.dy = 0
+		if self.tile() == 't':
+			if self.just_tp:
+				self.just_tp = False
+			elif rest == 0:
+				# teleport to the other gate
+				if self.tiles.teleports[0] == (self.x, self.y):
+					self.x, self.y = self.tiles.teleports[1]
+				else:
+					self.x, self.y = self.tiles.teleports[0]
+				self.just_tp = True
+
+		elif is_blocking(self.next_tile()):
+			self.dx = self.dy = 0
 
 		# set the absolute position
 		self.ay = int(self.y * TILE_SIZE + self.dy * TILE_SIZE * rest / Pacman.fpt)
