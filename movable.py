@@ -80,7 +80,7 @@ class Movable:
         self.ax = int(self.x * TILE_SIZE + self.dx * TILE_SIZE * rest / self.fpt)
 
         if (self.wdx or self.wdy) and rest == 0 \
-            and not is_blocking(self.next_wanted_tile()):
+            and not is_blocking(self.next_wanted_tile()) and self.tile() != TELEPORT:
             self.dx, self.dy = self.wdx, self.wdy
             self.wdx = self.wdy = 0
         return rest
