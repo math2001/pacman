@@ -13,7 +13,7 @@ class Pacman:
 
 	speed = 2 # pixel per frame
 
-	def __init__(self, x, y, dx, dy, plan):
+	def __init__(self, x, y, dx, dy, tiles):
 		# x and y are the tile position
 		self.x, self.y = x, y
 		# dx and dy are the direction the pacman is moving towards
@@ -24,10 +24,8 @@ class Pacman:
 		# note: this is the top-left corner of the image
 		self.ax, self.ay = x * TILE_SIZE, y * TILE_SIZE
 
-
-
 		# the representation of the map
-		self.plan = plan
+		self.tiles = tiles
 
 	def handle_keydown(self, e):
 		if e.key in (K_UP, K_w):
@@ -51,11 +49,11 @@ class Pacman:
 	def next_tile(self):
 		"""returns the next tile's representation the pacman is going to be on
 		if it kept going in this direction"""
-		return self.plan[self.y + self.dy][self.x + self.dx]
+		return self.tiles[self.y + self.dy][self.x + self.dx]
 
 	def next_wanted_tile(self):
 		"""Same as next tile, but using self.wd[xy]"""
-		return self.plan[self.y + self.wdy][self.x + self.wdx]
+		return self.tiles[self.y + self.wdy][self.x + self.wdx]
 
 	def update(self):
 		self.ax += self.dx * Pacman.speed
