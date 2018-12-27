@@ -3,16 +3,7 @@ from scene import Scene
 from utils import *
 from pacman import Pacman
 from ghost import Ghost
-import strategies.ghosts
-import strategies.pacman
-
-ghost_strategies = {
-    "shortest path": strategies.ghosts.ShortestPath
-}
-
-pacman_strategies = {
-    "user": strategies.pacman.User
-}
+from strategies import ghost_strategies, pacman_strategies
 
 class Game(Scene):
 

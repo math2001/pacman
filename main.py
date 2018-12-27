@@ -1,11 +1,23 @@
 import pygame
 from pygame.locals import *
+from collections import namedtuple
 from time import time
-from utils import EventManager
+from utils import *
 
+from scene import Scene
 from test import Test
 from game import Game
+from menu import Menu
 from utils import Screen
+
+fonts = namedtuple('Fonts', 'fancy arcade mono')(
+    pygame.freetype.Font('fonts/ka1.ttf', 20),
+    pygame.freetype.Font('fonts/arcade.ttf', 14),
+    pygame.freetype.Font('fonts/firamono.ttf', 12)
+)
+
+for font in fonts:
+    font.fgcolor = WHITE
 
 class App:
     def __init__(self):
@@ -13,9 +25,7 @@ class App:
         EventManager.on("set mode", self.set_mode)
         EventManager.on("switch scene", self.switch_scene)
 
-        EventManager.emit('set mode', (640, 400))
         self.done = False
-        self.font = pygame.font.SysFont("Fira Mono", 14)
         self.clock = pygame.time.Clock()
         self.max_fps = 40
         self.debug = True
@@ -23,10 +33,13 @@ class App:
         self.scenes = {
             "test": Test,
             "game": Game,
+            "menu": Menu,
         }
 
-        self.switch_scene("game", "shortest path", "user")
+        Scene.fonts = fonts
 
+        EventManager.emit('set mode', (640, 480))
+        EventManager.emit('switch scene', 'menu')
 
     def set_mode(self, *args, **kwargs):
         self.window = pygame.display.set_mode(*args, **kwargs)
@@ -40,10 +53,12 @@ class App:
         self.done = True
     
     def show_debug_infos(self):
-        fps = round(self.clock.get_fps())
-        text = self.font.render(" {} {:2} fps ".format(self.scene.debug_string(), fps), True, pygame.Color("grey"), pygame.Color(0, 0, 0))
-        rect = text.get_rect(bottomright=Screen.rect.bottomright)
-        Screen.surface.blit(text, rect)
+        text = f"<{self.scene.debug_string()}> " \
+               f"{round(self.clock.get_fps()):2} fps"
+        rect = fonts.mono.get_rect(text)
+        rect.bottomright = Screen.rect.bottomright
+        fonts.mono.render_to(Screen.surface, rect, text, fgcolor=WHITE,
+                                   bgcolor=BLACK)
     
     def mainloop(self):
         ''' the basic main loop, handling forceful quit (when the user double
@@ -60,7 +75,7 @@ class App:
                 self.scene.handle_event(event)
             Screen.surface.fill(0)
             self.scene.update()
-            self.scene.render(Screen.surface)
+            self.scene.render(Screen.surface, Screen.rect)
             if self.debug:
                 self.show_debug_infos()
             pygame.display.flip()

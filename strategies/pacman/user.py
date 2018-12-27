@@ -1,6 +1,7 @@
-from strategies import Strategy
+from strategies.strategy import Strategy
 from utils import EventManager
 from pygame.locals import *
+
 
 class User(Strategy):
 

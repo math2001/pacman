@@ -1,4 +1,4 @@
-from strategies import Strategy
+from strategies.strategy import Strategy
 import pygame.draw
 from utils import *
 

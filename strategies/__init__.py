@@ -1,22 +1,11 @@
-class Strategy:
+import strategies.ghosts
+import strategies.pacman
 
-    """A strategy is just like a scene
+ghost_strategies = {
+    "shortest path": strategies.ghosts.ShortestPath
+}
 
-    It just isn't *activated* as a scene. But in essense, they do the same
-    thing: update, render (for debug) and handle events. Hence why they have
-    such similar methods. I don't use inheritance because the mandatory ones
-    are different
-    """
-    def __init__(self, tiles, pacman, ghosts):
-        self.tiles = tiles
-        self.pacman = pacman
-        self.ghosts = ghosts
+pacman_strategies = {
+    "user": strategies.pacman.User
+}
 
-    def render(self, surface, rfc):
-        pass
-
-    def update(self, ufc):
-        pass
-
-    def handle_event(self, e):
-        pass

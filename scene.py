@@ -1,11 +1,17 @@
 """ This is a base class from which every scenes inherits from
 """
 
-from utils import EventManager
 import pygame
+import pygame.freetype
+from utils import EventManager
 from utils import Screen
 
+pygame.freetype.init()
+
 class Scene:
+
+    fonts = None
+  
     def handle_event(self, e):
         """ *pygame* event"""
         if e.type == pygame.QUIT:

@@ -3,10 +3,6 @@ from movable import Movable
 from utils import *
 from random import randint
 
-import pygame.freetype
-pygame.freetype.init()
-font = pygame.freetype.SysFont("Fira Mono", 10)
-
 DISPLAY_DIRECTION = False
 
 class Ghost(Movable):
