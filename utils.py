@@ -5,6 +5,7 @@ import warnings
 TILE_SIZE = 20 # pixels per tile
 WALL = '0'
 SPACE = ' '
+DOT = '.'
 TELEPORT = 't'
 START = 's'
 

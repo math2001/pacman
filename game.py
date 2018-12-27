@@ -22,6 +22,8 @@ class Game(Scene):
 
         self.ghosts = []
 
+        self.dots = []
+
         self.pacman = None
         self.paused = False
 
@@ -37,18 +39,23 @@ class Game(Scene):
         with open(f'plans/original.txt') as fo:
             dx, dy = intall(next(fo).split(','))
             for y, line in enumerate(fo):
-                line = line.strip()
-                self.tiles.append(list(line))
-                for x, char in enumerate(line):
+                fline = []
+                for x, char in enumerate(line.strip()):
                     if char == TELEPORT:
                         self.tiles.teleports.append((x, y))
+                        fline.append(TELEPORT)
                     elif char == START:
                         self.pacman = Pacman(x, y, dx, dy, self.tiles)
+                        fline.append(SPACE)
                     elif char in ghost_colors:
                         self.ghosts.append(Ghost(x, y, 0, 0, self.tiles,
                                                  ghost_colors[char]))
-                    elif char not in (SPACE, WALL):
+                        fline.append(DOT)
+                    elif char not in (SPACE, DOT, WALL):
                         raise ValueError(f"Invalid char {char!r} at {x, y}")
+                    else:
+                        fline.append(char)
+                self.tiles.append(fline)
 
         # a few safety checks
         if len(self.tiles.teleports) not in (0, 2):
@@ -117,6 +124,10 @@ class Game(Scene):
                 if char == WALL:
                     rect = pygame.Rect((x * TILE_SIZE, y * TILE_SIZE), (TILE_SIZE, TILE_SIZE))
                     pygame.draw.rect(surface, pygame.Color('gray'), rect)
+                if char == DOT:
+                    center = (x * TILE_SIZE + TILE_SIZE // 2,
+                              y * TILE_SIZE + TILE_SIZE // 2)
+                    pygame.draw.circle(surface, WHITE, center, TILE_SIZE // 10)
 
         self.pacman_strategy.render(surface, self.rfc)
         self.ghost_strategy.render(surface, self.rfc)

@@ -2,7 +2,7 @@ from strategies import Strategy
 import pygame.draw
 from utils import *
 
-DEBUG = 'color'
+DEBUG = 'none'
 
 def around(x, y):
     yield x, y
