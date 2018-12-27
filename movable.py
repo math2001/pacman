@@ -75,8 +75,7 @@ class Movable:
             self.x += self.dx
             self.y += self.dy
             if self.dx or self.dy:
-                # EventManager.emit('movable reached tile', self)
-                pass
+                EventManager.emit('movable reached tile', self)
             if is_blocking(self.next_tile()):
                 self.dx = self.dy = 0
         elif rest == 1:
