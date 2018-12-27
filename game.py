@@ -3,18 +3,15 @@ from Scene import Scene
 from utils import *
 from pacman import Pacman
 from ghost import Ghost
-from strategies.ghosts import *
-
-# note that a strategy is just like a scene, except it is never *activated* as 
-# a scene. But in essense, they do the same thing: update, render (for debug)
-# and handle events
+import strategies.ghosts
+import strategies.pacman
 
 ghost_strategies = {
-	"shortest path": ShortestPath
+	"shortest path": strategies.ghosts.ShortestPath
 }
 
 pacman_strategies = {
-	
+	"user": strategies.pacman.User
 }
 
 class Game(Scene):
@@ -53,7 +50,7 @@ class Game(Scene):
 		if not self.pacman:
 			raise ValueError(f"tiles doesn't have a starting position ({START!r})")
 
-		args = self.tiles, self.ghosts, self.pacman
+		args = self.tiles, self.pacman, self.ghosts
 		self.ghost_strategy = ghost_strategies[ghost_strategy](*args)
 		self.pacman_strategy = pacman_strategies[pacman_strategy](*args)
 
@@ -62,6 +59,7 @@ class Game(Scene):
 
 		EventManager.on('toggle-pause-game', self.togglepause)
 		EventManager.on('ghost-turn', self.ghostturn)
+		EventManager.on('pacman turn', self.pacmanturn)
 
 	def togglepause(self):
 		self.paused = not self.paused
@@ -74,17 +72,21 @@ class Game(Scene):
 				return
 		raise ValueError(f"There is no ghost with color {color!r}")
 
+	def pacmanturn(self, direction):
+		self.pacman.wdx, self.pacman.wdy = direction
+
 	def handle_event(self, e):
 		super().handle_event(e)
 		if e.type == pygame.KEYDOWN:
 			if e.key == pygame.K_SPACE:
-				self.paused = not self.paused
+				self.togglepause()
 			elif e.key == pygame.K_n and self.paused:
 				# go frame by frame
 				self.paused = False
 				self.update()
 				self.paused = True
-			self.pacman.handle_keydown(e)
+		self.pacman_strategy.handle_event(e)
+		self.ghost_strategy.handle_event(e)
 
 	def update(self):
 		if self.paused:

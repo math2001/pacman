@@ -1,4 +1,6 @@
-class ShortestPath:
+from strategies import Strategy
+
+class ShortestPath(Strategy):
 
     def __init__(self, tiles, ghosts, pacman):
         self.tiles = tiles

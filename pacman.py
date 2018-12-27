@@ -16,16 +16,6 @@ class Pacman(Movable):
 
 		self.just_tp = False
 
-	def handle_keydown(self, e):
-		if e.key in (K_UP, K_w):
-			self.wdx, self.wdy = 0, -1
-		elif e.key in (K_DOWN, K_s):
-			self.wdx, self.wdy = 0, 1
-		elif e.key in (K_LEFT, K_a):
-			self.wdx, self.wdy = -1, 0
-		elif e.key in (K_RIGHT, K_d):
-			self.wdx, self.wdy = 1, 0
-	
 	def update(self):
 		rest = super().update()
 		if self.tile() == TELEPORT:
