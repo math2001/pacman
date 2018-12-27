@@ -23,9 +23,6 @@ class ShortestPath(Strategy):
         EventManager.on('about to reach next tile', self.notify_ghosts)
 
     def __update_ghost(self, ghost):
-        if self.distances[ghost.y + ghost.dy][ghost.x + ghost.dx] == 21:
-            EventManager.emit("ghost turn", ghost.color, (None, None))
-            return
         closer = min(around(*(ghost.x + ghost.dx, ghost.y + ghost.dy)),
                      key=lambda pos: self.distances[pos[1]][pos[0]])
         EventManager.emit("ghost turn", ghost.color, (

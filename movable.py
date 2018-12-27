@@ -24,7 +24,8 @@ class Movable:
         # dx and dy are the direction the pacman is moving towards
         self.dx, self.dy = wdx, wdy
         # wdx and wdy are the wanted dx and dy.
-        self.wdx, self.wdy = 0, 0
+        # None means nothing is wanted, 0 means they want to stop
+        self.wdx, self.wdy = None, None
         # ax and ay are the absolute position (in pixel)
         # note: this is the top-left corner of the image
         self.ax, self.ay = x * TILE_SIZE, y * TILE_SIZE
@@ -80,20 +81,16 @@ class Movable:
                 self.dx = self.dy = 0
         elif rest == 1:
             EventManager.emit('about to reach next tile', self)
-            print('going to', self.wdx, self.wdy)
 
-        # self.ax = int(self.x * TILE_SIZE + self.dx * TILE_SIZE * rest / self.fpt)
-        # self.ay = int(self.y * TILE_SIZE + self.dy * TILE_SIZE * rest / self.fpt)
-        self.ay = self.y * TILE_SIZE
-        self.ax = self.x * TILE_SIZE
+        self.ax = int(self.x * TILE_SIZE + self.dx * TILE_SIZE * rest / self.fpt)
+        self.ay = int(self.y * TILE_SIZE + self.dy * TILE_SIZE * rest / self.fpt)
 
         if (self.wdx or self.wdy) and rest == 0 \
             and not is_blocking(self.next_wanted_tile()) and self.tile() != TELEPORT:
             self.dx, self.dy = self.wdx, self.wdy
-            self.wdx = self.wdy = 0
-        if self.wdx is None or self.wdy is None and rest == 0:
-            assert self.wdx is None and self.wdy is None, \
-                "wdx and wdy should be *both* None when at least one is"
+            self.wdx = self.wdy = None
+
+        if self.wdx == self.wdy == 0 and rest == 0:
             self.dx = self.dy = 0
-            self.wdx = self.wdy = 0
+            self.wdx = self.wdy = None
         return rest
