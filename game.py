@@ -71,6 +71,8 @@ class Game(Scene):
         EventManager.on('ghost turn', self.ghostturn)
         EventManager.on('pacman turn', self.pacmanturn)
 
+        EventManager.on('movable reached tile', self.removedot)
+
         # instantiate the strategies
 
         args = self.tiles, self.pacman, self.ghosts
@@ -87,6 +89,13 @@ class Game(Scene):
                 ghost.wdx, ghost.wdy = direction
                 return
         raise ValueError(f"There is no ghost with color {color!r}")
+
+    def removedot(self, movable):
+        if not isinstance(movable, Pacman):
+            return
+        x, y = movable.pos
+        if self.tiles[y][x] == DOT:
+            self.tiles[y][x] = SPACE
 
     def pacmanturn(self, direction):
         self.pacman.wdx, self.pacman.wdy = direction
