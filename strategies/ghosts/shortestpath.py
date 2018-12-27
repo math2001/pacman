@@ -9,7 +9,9 @@ class ShortestPath(Strategy):
 
         self.distances = None
 
-    def map_distances(self, x, y):
+        EventManager.on('movable reached tile', self.map_distances)
+
+    def map_distances(self, movable):
         self.distances = [[float('inf') for _ in range(self.tiles.width)] \
                           for _ in range(self.tiles.height)]
 
@@ -31,12 +33,10 @@ class ShortestPath(Strategy):
                 and self.distances[y][x+1] > distance + 1:
                 map(x + 1, y, distance + 1)
 
-        map(x, y, 0)
-
-    def update(self):
-        self.map_distances(self.pacman.x, self.pacman.y)
+        map(movable.x, movable.y, 0)
 
     def render(self, surface):
+        return
         for y, row in enumerate(self.tiles):
             for x, char in enumerate(row):
                 if not is_blocking(char) and self.distances:

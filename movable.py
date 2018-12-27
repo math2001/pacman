@@ -75,6 +75,8 @@ class Movable:
             self.y += self.dy
             if is_blocking(self.next_tile()):
                 self.dx = self.dy = 0
+            if self.dx or self.dy:
+                EventManager.emit('movable reached tile', self)
 
         self.ay = int(self.y * TILE_SIZE + self.dy * TILE_SIZE * rest / self.fpt)
         self.ax = int(self.x * TILE_SIZE + self.dx * TILE_SIZE * rest / self.fpt)
