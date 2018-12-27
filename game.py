@@ -3,11 +3,23 @@ from Scene import Scene
 from utils import *
 from pacman import Pacman
 from ghost import Ghost
+from strategies.ghosts import *
+
+# note that a strategy is just like a scene, except it is never *activated* as 
+# a scene. But in essense, they do the same thing: update, render (for debug)
+# and handle events
+
+ghost_strategies = {
+	"shortest path": ShortestPath
+}
+
+pacman_strategies = {
+	
+}
 
 class Game(Scene):
 
-	def __init__(self, *args, **kwargs):
-		super().__init__(*args, **kwargs)
+	def __init__(self, ghost_strategy, pacman_strategy):
 		self.debug = True
 		self.tiles = Tiles()
 		self.tiles.teleports = []
@@ -40,6 +52,10 @@ class Game(Scene):
 							 f"{len(self.tiles.teleports)}")
 		if not self.pacman:
 			raise ValueError(f"tiles doesn't have a starting position ({START!r})")
+
+		args = self.tiles, self.ghosts, self.pacman
+		self.ghost_strategy = ghost_strategies[ghost_strategy](*args)
+		self.pacman_strategy = pacman_strategies[pacman_strategy](*args)
 
 		EventManager.emit("set mode", (self.tiles.width * TILE_SIZE,
 									   self.tiles.height * TILE_SIZE))

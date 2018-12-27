@@ -20,7 +20,9 @@ class App:
             "test": Test,
             "game": Game,
         }
-        self.switch_scene("game")
+
+        self.switch_scene("game", "shortest path", "user")
+
         EventManager.on("quit", self.quit)
         EventManager.on("set mode", self.set_mode)
         EventManager.on("switch scene", self.switch_scene)
@@ -29,8 +31,8 @@ class App:
         self.window = pygame.display.set_mode(*args, **kwargs)
         Screen.update()
 
-    def switch_scene(self, scene):
-        self.scene = self.scenes[scene]()
+    def switch_scene(self, scene, *args, **kwargs):
+        self.scene = self.scenes[scene](*args, **kwargs)
         return self.scene
     
     def quit(self):
