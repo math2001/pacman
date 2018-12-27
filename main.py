@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from time import time
+from utils import EventManager
 
 from test import Test
 from game import Game
@@ -20,14 +21,16 @@ class App:
             "game": Game,
         }
         self.switch_scene("game")
+        EventManager.on("quit", self.quit)
+        EventManager.on("set mode", self.set_mode)
+        EventManager.on("switch scene", self.switch_scene)
 
     def set_mode(self, *args, **kwargs):
         self.window = pygame.display.set_mode(*args, **kwargs)
         Screen.update()
 
     def switch_scene(self, scene):
-        scene = self.scenes[scene]
-        self.scene = scene(self.switch_scene, self.quit, self.set_mode)
+        self.scene = self.scenes[scene]()
         return self.scene
     
     def quit(self):

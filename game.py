@@ -41,8 +41,8 @@ class Game(Scene):
 		if not self.pacman:
 			raise ValueError(f"tiles doesn't have a starting position ({START!r})")
 
-		self.set_mode((self.tiles.width * TILE_SIZE,
-					   self.tiles.height * TILE_SIZE))
+		EventManager.emit("set mode", (self.tiles.width * TILE_SIZE,
+									   self.tiles.height * TILE_SIZE))
 
 		EventManager.on('toggle-pause-game', self.togglepause)
 		EventManager.on('ghost-turn', self.ghostturn)
