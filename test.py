@@ -1,6 +1,6 @@
 import pygame
 from time import time
-from Scene import Scene
+from scene import Scene
 
 class Test(Scene):
 

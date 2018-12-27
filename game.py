@@ -1,5 +1,5 @@
 import pygame
-from Scene import Scene
+from scene import Scene
 from utils import *
 from pacman import Pacman
 from ghost import Ghost
