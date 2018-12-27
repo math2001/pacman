@@ -11,7 +11,7 @@ DISPLAY_DIRECTION = False
 
 class Ghost(Movable):
 
-    fpt = 7
+    fpt = 5
 
     def __init__(self, x, y, wdx, wdy, tiles, color):
         super().__init__(x, y, wdx, wdy, tiles)

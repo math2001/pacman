@@ -66,6 +66,9 @@ class Movable:
             raise IndexError(f"Index should be positive, got {self.x + self.wdx}")
         return self.tiles[self.y + self.wdy][self.x + self.wdx]
 
+    def is_blocking(self, char):
+        return is_blocking(char, classname(self) == 'Pacman')
+
     def update(self, ufc):
         rest = ufc % self.fpt
 
@@ -74,14 +77,15 @@ class Movable:
             self.y += self.dy
             if self.dx or self.dy:
                 EventManager.emit('movable reached tile', self)
-            if is_blocking(self.next_tile()):
+            if self.is_blocking(self.next_tile()):
                 self.dx = self.dy = 0
 
         self.ax = int(self.x * TILE_SIZE + self.dx * TILE_SIZE * rest / self.fpt)
         self.ay = int(self.y * TILE_SIZE + self.dy * TILE_SIZE * rest / self.fpt)
 
         if (self.wdx or self.wdy) and rest == 0 \
-            and not is_blocking(self.next_wanted_tile()) and self.tile() != TELEPORT:
+            and not self.is_blocking(self.next_wanted_tile()) \
+            and self.tile() != TELEPORT:
             self.dx, self.dy = self.wdx, self.wdy
             self.wdx = self.wdy = None
 

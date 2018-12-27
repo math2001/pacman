@@ -14,7 +14,12 @@ BLACK = 0  , 0  ,   0
 PINK = pygame.Color('pink')
 RED = pygame.Color('red')
 
-is_blocking = lambda c: c in (WALL, )
+def is_blocking(char, is_pacman=False):
+    # also block on teleport gate if not the pacman
+    return char in (WALL, ) + (() if is_pacman else (TELEPORT, ))
+
+def classname(obj):
+    return obj.__class__.__name__
 
 pygame.freetype.init()
 font = pygame.freetype.SysFont("Fira Mono", 10)
