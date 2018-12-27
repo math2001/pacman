@@ -1,4 +1,6 @@
 from pygame.display import get_surface
+import pygame.freetype
+import warnings
 
 TILE_SIZE = 20 # pixels per tile
 WALL = '0'
@@ -6,7 +8,15 @@ SPACE = ' '
 TELEPORT = 't'
 START = 's'
 
+WHITE = 255, 255, 255
+BLACK = 0  , 0  ,   0
+PINK = pygame.Color('pink')
+RED = pygame.Color('red')
+
 is_blocking = lambda c: c in (WALL, )
+
+pygame.freetype.init()
+font = pygame.freetype.SysFont("Fira Mono", 10)
 
 def intall(arr):
     return [int(n) for n in arr]
@@ -21,14 +31,21 @@ class Screen:
 class EventManager:
 
     events = {}
+
     @classmethod
     def on(cls, event, func):
         cls.events.setdefault(event, []).append(func)
     
     @classmethod
     def emit(cls, event, *args, **kwargs):
-        for func in cls.events.get(event, ()):
-            func(*args, **kwargs)
+        try:
+            cbs = cls.events[event]
+        except KeyError:
+            warnings.warn(f"Emitting event {event!r} that hasn't got any "
+                          f"listener. Only know about {list(cls.events.keys())}")
+
+        for cb in cbs:
+            cb(*args, **kwargs)
 
 class Tiles(list):
 

@@ -73,16 +73,27 @@ class Movable:
         if rest == 0:
             self.x += self.dx
             self.y += self.dy
+            if self.dx or self.dy:
+                # EventManager.emit('movable reached tile', self)
+                pass
             if is_blocking(self.next_tile()):
                 self.dx = self.dy = 0
-            if self.dx or self.dy:
-                EventManager.emit('movable reached tile', self)
+        elif rest == 1:
+            EventManager.emit('about to reach next tile', self)
+            print('going to', self.wdx, self.wdy)
 
-        self.ay = int(self.y * TILE_SIZE + self.dy * TILE_SIZE * rest / self.fpt)
-        self.ax = int(self.x * TILE_SIZE + self.dx * TILE_SIZE * rest / self.fpt)
+        # self.ax = int(self.x * TILE_SIZE + self.dx * TILE_SIZE * rest / self.fpt)
+        # self.ay = int(self.y * TILE_SIZE + self.dy * TILE_SIZE * rest / self.fpt)
+        self.ay = self.y * TILE_SIZE
+        self.ax = self.x * TILE_SIZE
 
         if (self.wdx or self.wdy) and rest == 0 \
             and not is_blocking(self.next_wanted_tile()) and self.tile() != TELEPORT:
             self.dx, self.dy = self.wdx, self.wdy
+            self.wdx = self.wdy = 0
+        if self.wdx is None or self.wdy is None and rest == 0:
+            assert self.wdx is None and self.wdy is None, \
+                "wdx and wdy should be *both* None when at least one is"
+            self.dx = self.dy = 0
             self.wdx = self.wdy = 0
         return rest

@@ -9,9 +9,13 @@ from utils import Screen
 
 class App:
     def __init__(self):
-        self.set_mode((28 * 20, 31 * 20))
+        EventManager.on("quit", self.quit)
+        EventManager.on("set mode", self.set_mode)
+        EventManager.on("switch scene", self.switch_scene)
+
+        EventManager.emit('set mode', (640, 400))
         self.done = False
-        self.font = pygame.font.SysFont("Consolas", 14)
+        self.font = pygame.font.SysFont("Fira Mono", 14)
         self.clock = pygame.time.Clock()
         self.max_fps = 60
         self.debug = True
@@ -23,9 +27,6 @@ class App:
 
         self.switch_scene("game", "shortest path", "user")
 
-        EventManager.on("quit", self.quit)
-        EventManager.on("set mode", self.set_mode)
-        EventManager.on("switch scene", self.switch_scene)
 
     def set_mode(self, *args, **kwargs):
         self.window = pygame.display.set_mode(*args, **kwargs)

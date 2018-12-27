@@ -24,7 +24,7 @@ class Game(Scene):
 		self.ghosts = []
 
 		self.pacman = None
-		self.paused = False
+		self.paused = True
 
 		ghost_colors = {'r': 'red', 'c': 'cyan', 'p': 'pink', 'y': 'yellow'}
 
@@ -44,28 +44,32 @@ class Game(Scene):
 					elif char not in (SPACE, WALL):
 						raise ValueError(f"Invalid char {char!r} at {x, y}")
 
+		self.ghosts = [self.ghosts[0]]
+
 		if len(self.tiles.teleports) not in (0, 2):
 			raise ValueError("tiles should have 0 or 2 teleport points, got "
 							 f"{len(self.tiles.teleports)}")
 		if not self.pacman:
 			raise ValueError(f"tiles doesn't have a starting position ({START!r})")
 
-		args = self.tiles, self.pacman, self.ghosts
-		self.ghost_strategy = ghost_strategies[ghost_strategy](*args)
-		self.pacman_strategy = pacman_strategies[pacman_strategy](*args)
-
 		EventManager.emit("set mode", (self.tiles.width * TILE_SIZE,
 									   self.tiles.height * TILE_SIZE))
 
 		EventManager.on('toggle-pause-game', self.togglepause)
-		EventManager.on('ghost-turn', self.ghostturn)
+		EventManager.on('ghost turn', self.ghostturn)
 		EventManager.on('pacman turn', self.pacmanturn)
+
+		args = self.tiles, self.pacman, self.ghosts
+		self.ghost_strategy = ghost_strategies[ghost_strategy](*args)
+		self.pacman_strategy = pacman_strategies[pacman_strategy](*args)
 
 	def togglepause(self):
 		self.paused = not self.paused
 
 	def ghostturn(self, color, direction):
 		"""Makes the ghost turn"""
+		if color == pygame.Color('red'):
+			print('set ghost direction', color, direction)
 		for ghost in self.ghosts:
 			if ghost.color == color:
 				ghost.wdx, ghost.wdy = direction
@@ -91,12 +95,11 @@ class Game(Scene):
 	def update(self):
 		if self.paused:
 			return
-		self.pacman.update()
 		for ghost in self.ghosts:
 			ghost.update()
 		self.pacman_strategy.update()
 		self.ghost_strategy.update()
-
+		self.pacman.update()
 
 	def render(self, surface):
 		# render the maze
