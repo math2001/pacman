@@ -45,9 +45,18 @@ class Game(Scene):
 					   self.tiles.height * TILE_SIZE))
 
 		EventManager.on('toggle-pause-game', self.togglepause)
+		EventManager.on('ghost-turn', self.ghostturn)
 
 	def togglepause(self):
 		self.paused = not self.paused
+
+	def ghostturn(self, color, direction):
+		"""Makes the ghost turn"""
+		for ghost in self.ghosts:
+			if ghost.color == color:
+				ghost.wdx, ghost.wdy = direction
+				return
+		raise ValueError(f"There is no ghost with color {color!r}")
 
 	def handle_event(self, e):
 		super().handle_event(e)
