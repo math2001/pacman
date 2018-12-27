@@ -7,8 +7,6 @@ class Pacman(Movable):
 
     """Pacman is basically a regular movable, except it can teleport"""
 
-    # think of it as speed = 1 / 10
-    # frames per tiles
     fpt = 5
 
     def __init__(self, x, y, wdx, wdy, tiles):

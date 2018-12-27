@@ -11,6 +11,8 @@ DISPLAY_DIRECTION = False
 
 class Ghost(Movable):
 
+    fpt = 7
+
     def __init__(self, x, y, wdx, wdy, tiles, color):
         super().__init__(x, y, wdx, wdy, tiles)
         self.color = pygame.Color(color) if isinstance(color, str) else color

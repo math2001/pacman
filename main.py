@@ -17,7 +17,7 @@ class App:
         self.done = False
         self.font = pygame.font.SysFont("Fira Mono", 14)
         self.clock = pygame.time.Clock()
-        self.max_fps = 60
+        self.max_fps = 40
         self.debug = True
 
         self.scenes = {
