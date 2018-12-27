@@ -17,7 +17,7 @@ class Scene:
         if e.type == pygame.QUIT:
             EventManager.emit("quit")
     
-    def render(self, surface):
+    def render(self, surface, rect):
         raise ValueError("No renderer for scene {}".format(self.__class__.__name__))
     
     def update(self):

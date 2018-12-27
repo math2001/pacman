@@ -58,7 +58,7 @@ class Test(Scene):
 
         map(x, y, 0)
 
-    def render(self, surface):
+    def render(self, surface, rect):
         for y, row in enumerate(self.plan):
             for x, char in enumerate(row):
                 if char == ' ' and self.distance_plan:

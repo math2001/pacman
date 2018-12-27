@@ -3,11 +3,11 @@ from scene import Scene
 from utils import *
 from pacman import Pacman
 from ghost import Ghost
-from strategies import ghost_strategies, pacman_strategies
+from strategies import pacman_strategies, ghosts_strategies
 
 class Game(Scene):
 
-    def __init__(self, ghost_strategy, pacman_strategy):
+    def __init__(self, pacman_strategy, ghosts_strategy):
         self.tiles = Tiles()
         self.tiles.teleports = []
 
@@ -67,7 +67,7 @@ class Game(Scene):
         # instantiate the strategies
 
         args = self.tiles, self.pacman, self.ghosts
-        self.ghost_strategy = ghost_strategies[ghost_strategy](*args)
+        self.ghosts_strategy = ghosts_strategies[ghosts_strategy](*args)
         self.pacman_strategy = pacman_strategies[pacman_strategy](*args)
 
     def togglepause(self):
@@ -102,7 +102,7 @@ class Game(Scene):
                 self.update()
                 self.paused = True
         self.pacman_strategy.handle_event(e)
-        self.ghost_strategy.handle_event(e)
+        self.ghosts_strategy.handle_event(e)
 
     def update(self):
         if self.paused:
@@ -111,10 +111,10 @@ class Game(Scene):
         for ghost in self.ghosts:
             ghost.update(self.ufc)
         self.pacman_strategy.update(self.ufc)
-        self.ghost_strategy.update(self.ufc)
+        self.ghosts_strategy.update(self.ufc)
         self.pacman.update(self.ufc)
 
-    def render(self, surface):
+    def render(self, surface, rect):
         self.rfc += 1
         # render the maze
         # this can be heavily optimized. It can be rendered in __init__ on a 
@@ -130,7 +130,7 @@ class Game(Scene):
                     pygame.draw.circle(surface, WHITE, center, TILE_SIZE // 10)
 
         self.pacman_strategy.render(surface, self.rfc)
-        self.ghost_strategy.render(surface, self.rfc)
+        self.ghosts_strategy.render(surface, self.rfc)
 
         self.pacman.render(surface, self.rfc)
         for ghost in self.ghosts:

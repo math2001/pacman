@@ -14,6 +14,7 @@ WHITE = 255, 255, 255
 BLACK = 0  , 0  ,   0
 PINK = pygame.Color('pink')
 RED = pygame.Color('red')
+BLUE = pygame.Color('blue')
 
 @contextmanager
 def fontedit(font, **kwargs):
@@ -34,6 +35,12 @@ def fontedit(font, **kwargs):
             setattr(font, key, value)
         except AttributeError:
             raise AttributeError(f"Could not reset {key!r} to its original value")
+
+class dotdict(dict):
+    """dot.notation access to dictionary attributes"""
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 
 def is_blocking(char, is_pacman=False):
     # also block on teleport gate if not the pacman
