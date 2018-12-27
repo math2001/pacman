@@ -51,7 +51,6 @@ class Game(Scene):
 						raise ValueError(f"Invalid char {char!r} at {x, y}")
 
 		# a few safety checks
-
 		if len(self.tiles.teleports) not in (0, 2):
 			raise ValueError("tiles should have 0 or 2 teleport points, got "
 							 f"{len(self.tiles.teleports)}")
