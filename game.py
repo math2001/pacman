@@ -94,6 +94,9 @@ class Game(Scene):
 		self.pacman.update()
 		for ghost in self.ghosts:
 			ghost.update()
+		self.pacman_strategy.update()
+		self.ghost_strategy.update()
+
 
 	def render(self, surface):
 		# render the maze
@@ -104,6 +107,9 @@ class Game(Scene):
 				if char == WALL:
 					rect = pygame.Rect((x * TILE_SIZE, y * TILE_SIZE), (TILE_SIZE, TILE_SIZE))
 					pygame.draw.rect(surface, pygame.Color('gray'), rect)
+
+		self.pacman_strategy.render(surface)
+		self.ghost_strategy.render(surface)
 
 		self.pacman.render(surface)
 		for ghost in self.ghosts:
