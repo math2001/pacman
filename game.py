@@ -3,7 +3,7 @@ from scene import Scene
 from utils import *
 from pacman import Pacman
 from ghost import Ghost
-from strategies import pacman_strategies, ghosts_strategies
+from strategies import strategies
 
 class Game(Scene):
 
@@ -67,8 +67,10 @@ class Game(Scene):
         # instantiate the strategies
 
         args = self.tiles, self.pacman, self.ghosts
-        self.ghosts_strategy = ghosts_strategies[ghosts_strategy](*args)
-        self.pacman_strategy = pacman_strategies[pacman_strategy](*args)
+        self.strategy = dotdict(
+            pacman=strategies.pacman[pacman_strategy](*args),
+            ghosts=strategies.ghosts[ghosts_strategy](*args),
+        )
 
     def togglepause(self):
         self.paused = not self.paused
@@ -101,17 +103,20 @@ class Game(Scene):
                 self.paused = False
                 self.update()
                 self.paused = True
-        self.pacman_strategy.handle_event(e)
-        self.ghosts_strategy.handle_event(e)
+        self.strategy.pacman.handle_event(e)
+        self.strategy.ghosts.handle_event(e)
 
     def update(self):
         if self.paused:
             return
         self.ufc += 1
+
         for ghost in self.ghosts:
             ghost.update(self.ufc)
-        self.pacman_strategy.update(self.ufc)
-        self.ghosts_strategy.update(self.ufc)
+
+        self.strategy.pacman.update(self.ufc)
+        self.strategy.ghosts.update(self.ufc)
+
         self.pacman.update(self.ufc)
 
     def render(self, surface, rect):
@@ -129,8 +134,8 @@ class Game(Scene):
                               y * TILE_SIZE + TILE_SIZE // 2)
                     pygame.draw.circle(surface, WHITE, center, TILE_SIZE // 10)
 
-        self.pacman_strategy.render(surface, self.rfc)
-        self.ghosts_strategy.render(surface, self.rfc)
+        self.strategy.pacman.render(surface, self.rfc)
+        self.strategy.ghosts.render(surface, self.rfc)
 
         self.pacman.render(surface, self.rfc)
         for ghost in self.ghosts:

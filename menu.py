@@ -1,7 +1,7 @@
 from pygame.locals import *
 from scene import Scene
 from utils import *
-from strategies import pacman_strategies, ghosts_strategies
+from strategies import strategies
 from collections import namedtuple
 
 Sprite = namedtuple('Sprite', 'surf rect')
@@ -17,10 +17,9 @@ class Menu(Scene):
             self.go.rect.bottom = Screen.rect.bottom - 30
             self.go.rect.centerx = Screen.rect.centerx
 
-        self.strategies_pacman_rects = {}
-        self.strategies_ghosts_rects = {}
+        self.selection = dotdict(pacman='user', ghosts='shortest path')
 
-        self.strategy_combination = dotdict(pacman='user', ghosts='shortest path')
+        self.strategies_rects = dotdict(pacman=dotdict(), ghosts=dotdict())
 
     def handle_event(self, e):
         super().handle_event(e)
@@ -29,19 +28,19 @@ class Menu(Scene):
                 # TODO: find out the 2 strategies
                 # TODO: no strategy selected = error message
                 EventManager.emit('switch scene', 'game',
-                                  self.strategy_combination.pacman,
-                                  self.strategy_combination.ghosts)
+                                  self.selection.pacman,
+                                  self.selection.ghosts)
 
-            for name, rect in self.strategies_pacman_rects.items():
+            for name, rect in self.strategies_rects.pacman.items():
                 if rect.collidepoint(e.pos):
-                    self.strategy_combination.pacman = name
+                    self.selection.pacman = name
                     break
             else:
                 # because there cannot be 2 strategies colliding at the same
                 # time (none of them are colliding with each other)
-                for name, rect in self.strategies_ghosts_rects.items():
+                for name, rect in self.strategies_rects.ghosts.items():
                     if rect.collidepoint(e.pos):
-                        self.strategy_combination.ghosts = name
+                        self.selection.ghosts = name
                         break
 
 
@@ -53,65 +52,41 @@ class Menu(Scene):
             r.midtop = rect.midtop
             r.top += 40
             font.render_to(surface, r, text, fgcolor=WHITE)
-            title_bottom = r.bottom
 
         padding = 50 # between the 2 columns
         line_height = 20 # between 2 rows
 
-        text = 'Pacman strategy'
-        with fontedit(self.fonts.arcade, size=30) as font:
-            r = font.get_rect(text)
-            r.top = title_bottom + 50
-            r.right = rect.centerx - padding / 2
-            font.render_to(surface, r, text)
-            catego_bottom = r.bottom
-            left = r.left
-            width = r.width
+        def display_column(title, top, subject):
+            with fontedit(self.fonts.arcade, size=30, underline=True) as font:
+                r = font.get_rect(title)
+                r.top = top
+                if subject == 'pacman':
+                    r.right = rect.centerx - padding / 2
+                else:
+                    r.left = rect.centerx + padding / 2
+                font.render_to(surface, r, title)
 
-        # pacman strategies
-        with fontedit(self.fonts.arcade, size=20) as font:
-            bottom = catego_bottom + 20
-            for name in pacman_strategies:
-                r = font.get_rect(name)
-                r.top = bottom
-                r.left = left + 10
-                kwargs = dotdict()
-                if name == self.strategy_combination.pacman:
-                    kwargs.fgcolor = BLACK
-                    bg = r.copy()
-                    bg.width = width
-                    bg.inflate_ip((5, 2))
-                    pygame.draw.rect(surface, WHITE, bg)
+                left = r.left
+                width = r.width
 
-                font.render_to(surface, r, name, **kwargs)
-                self.strategies_pacman_rects[name] = r
-                bottom += r.height + line_height
+            with fontedit(self.fonts.arcade, size=20) as font:
+                bottom = r.bottom + 20
+                for name in strategies[subject]:
+                    r = font.get_rect(name)
+                    r.width = width
+                    r.top = bottom
+                    r.left = left + 10
+                    row = r.inflate((5, 10))
+                    kwargs = dotdict()
+                    if name == self.selection[subject]:
+                        kwargs.fgcolor = BLACK
+                        pygame.draw.rect(surface, WHITE, row)
 
-        text = 'Ghost strategy'
-        with fontedit(self.fonts.arcade, size=30) as font:
-            r = font.get_rect(text)
-            r.top = title_bottom + 50
-            r.left = rect.centerx + padding / 2
-            left = r.left
-            font.render_to(surface, r, text)
+                    font.render_to(surface, r, name, **kwargs)
+                    self.strategies_rects[subject][name] = row
+                    bottom += r.height + line_height
 
-        # ghost strategies
-        with fontedit(self.fonts.arcade, size=20) as font:
-            bottom = catego_bottom + 20
-            for name in ghosts_strategies:
-                r = font.get_rect(name)
-                r.top = bottom
-                r.left = left + 10
-                kwargs = dotdict()
-                if name == self.strategy_combination.ghosts:
-                    kwargs.fgcolor = BLACK
-                    bg = r.copy()
-                    bg.width = width
-                    bg.inflate_ip((5, 2))
-                    pygame.draw.rect(surface, WHITE, bg)
-
-                font.render_to(surface, r, name, **kwargs)
-                self.strategies_ghosts_rects[name] = r
-                bottom += r.height + line_height
+        display_column('Pacman strategy', r.bottom + 50, 'pacman')
+        display_column('Ghosts strategy', r.bottom + 50, 'ghosts')
 
         surface.blit(*self.go)
