@@ -1,5 +1,6 @@
 import pygame
 import warnings
+from collections import namedtuple
 from contextlib import contextmanager
 from pygame.display import get_surface
 
@@ -15,6 +16,8 @@ BLACK = 0  , 0  ,   0
 PINK = pygame.Color('pink')
 RED = pygame.Color('red')
 BLUE = pygame.Color('blue')
+
+Sprite = namedtuple('Sprite', 'surf rect')
 
 @contextmanager
 def fontedit(font, **kwargs):

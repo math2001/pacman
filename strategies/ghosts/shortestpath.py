@@ -2,7 +2,7 @@ from strategies.strategy import Strategy
 import pygame.draw
 from utils import *
 
-DEBUG = 'none'
+DEBUG = 'color'
 
 def around(x, y):
     yield x, y
@@ -21,6 +21,10 @@ class ShortestPath(Strategy):
             self.__update_ghost(ghost)
 
         EventManager.on('movable reached tile', self.notify_ghosts)
+
+        self.tile = Sprite(pygame.Surface((TILE_SIZE, TILE_SIZE)),
+                           pygame.Rect(0, 0, TILE_SIZE, TILE_SIZE))
+        self.tile.surf.set_alpha(128)
 
     def __update_ghost(self, ghost):
         closer = min(around(*(ghost.x, ghost.y)),
@@ -62,21 +66,26 @@ class ShortestPath(Strategy):
 
         map(movable.x, movable.y, 0)
 
-    def render(self, surface, ufc):
+    def __render_block(self, surface, x, y):
+        if DEBUG == 'color':
+            if self.distances[y][x] == float('inf'):
+                color = 100, 50, 50
+            else:
+                color = (self.distances[y][x] * 5 % 255, ) * 3
+
+            color = pygame.Color(*color, 100)
+            self.tile.surf.fill(color)
+            self.tile.rect.topleft = x * TILE_SIZE, y * TILE_SIZE
+            surface.blit(*self.tile)
+        elif DEBUG == 'numbers':
+            coef = str(self.distances[y][x])
+            rect = font.get_rect(coef)
+            rect.center = (x * TILE_SIZE + TILE_SIZE // 2,
+                           y * TILE_SIZE + TILE_SIZE // 2)
+            font.render_to(surface, rect, coef, WHITE)
+
+    def render(self, surface, rect, ufc):
         for y, row in enumerate(self.tiles):
             for x, char in enumerate(row):
                 if not is_blocking(char) and self.distances:
-                    if DEBUG == 'color':
-                        if self.distances[y][x] == float('inf'):
-                            color = (100, 50, 50)
-                        else:
-                            color = (self.distances[y][x] * 5 % 255, ) * 3
-                        pygame.draw.rect(surface, color,
-                            pygame.Rect((x * TILE_SIZE, y * TILE_SIZE),
-                                        (TILE_SIZE, TILE_SIZE)))
-                    elif DEBUG == 'numbers':
-                        coef = str(self.distances[y][x])
-                        rect = font.get_rect(coef)
-                        rect.center = (x * TILE_SIZE + TILE_SIZE // 2,
-                                       y * TILE_SIZE + TILE_SIZE // 2)
-                        font.render_to(surface, rect, coef, WHITE)
+                    self.__render_block(surface, x, y,)

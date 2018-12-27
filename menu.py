@@ -2,9 +2,6 @@ from pygame.locals import *
 from scene import Scene
 from utils import *
 from strategies import strategies
-from collections import namedtuple
-
-Sprite = namedtuple('Sprite', 'surf rect')
 
 class Menu(Scene):
 

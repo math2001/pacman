@@ -134,8 +134,8 @@ class Game(Scene):
                               y * TILE_SIZE + TILE_SIZE // 2)
                     pygame.draw.circle(surface, WHITE, center, TILE_SIZE // 10)
 
-        self.strategy.pacman.render(surface, self.rfc)
-        self.strategy.ghosts.render(surface, self.rfc)
+        self.strategy.pacman.render(surface, rect, self.rfc)
+        self.strategy.ghosts.render(surface, rect, self.rfc)
 
         self.pacman.render(surface, self.rfc)
         for ghost in self.ghosts:

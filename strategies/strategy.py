@@ -12,7 +12,7 @@ class Strategy:
         self.pacman = pacman
         self.ghosts = ghosts
 
-    def render(self, surface, rfc):
+    def render(self, surface, rect, rfc):
         pass
 
     def update(self, ufc):
