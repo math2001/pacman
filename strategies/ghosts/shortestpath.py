@@ -2,6 +2,8 @@ from strategies import Strategy
 import pygame.draw
 from utils import *
 
+DEBUG = 'numbers'
+
 def around(x, y):
     yield x, y
     yield x-1, y
@@ -18,20 +20,19 @@ class ShortestPath(Strategy):
         for ghost in self.ghosts:
             self.__update_ghost(ghost)
 
-        EventManager.on('movable reached tile', lambda ghost: None)
-        # EventManager.on('about to reach next tile', lambda ghost: None)
-        EventManager.on('about to reach next tile', self.notify_ghosts)
+        EventManager.on('movable reached tile', self.notify_ghosts)
 
     def __update_ghost(self, ghost):
-        closer = min(around(*(ghost.x + ghost.dx, ghost.y + ghost.dy)),
+        closer = min(around(*(ghost.x, ghost.y)),
                      key=lambda pos: self.distances[pos[1]][pos[0]])
         EventManager.emit("ghost turn", ghost.color, (
-            closer[0] - ghost.x - ghost.dx,
-            closer[1] - ghost.y - ghost.dy
+            closer[0] - ghost.x,
+            closer[1] - ghost.y
         ))
 
     def notify_ghosts(self, movable):
         if movable.__class__.__name__ == 'Pacman':
+            self.map_distances(movable)
             for ghost in self.ghosts:
                 self.__update_ghost(ghost)
         else:
@@ -65,15 +66,17 @@ class ShortestPath(Strategy):
         for y, row in enumerate(self.tiles):
             for x, char in enumerate(row):
                 if not is_blocking(char) and self.distances:
-                    # if self.distances[y][x] == float('inf'):
-                    #     color = (100, 50, 50)
-                    # else:
-                    #     color = (self.distances[y][x] * 5 % 255, ) * 3
-                    # pygame.draw.rect(surface, color,
-                    #     pygame.Rect((x * TILE_SIZE, y * TILE_SIZE),
-                    #                 (TILE_SIZE, TILE_SIZE)))
-                    coef = str(self.distances[y][x])
-                    rect = font.get_rect(coef)
-                    rect.center = (x * TILE_SIZE + TILE_SIZE // 2,
-                                   y * TILE_SIZE + TILE_SIZE // 2)
-                    font.render_to(surface, rect, coef, WHITE)
+                    if DEBUG == 'color':
+                        if self.distances[y][x] == float('inf'):
+                            color = (100, 50, 50)
+                        else:
+                            color = (self.distances[y][x] * 5 % 255, ) * 3
+                        pygame.draw.rect(surface, color,
+                            pygame.Rect((x * TILE_SIZE, y * TILE_SIZE),
+                                        (TILE_SIZE, TILE_SIZE)))
+                    elif DEBUG == 'numbers':
+                        coef = str(self.distances[y][x])
+                        rect = font.get_rect(coef)
+                        rect.center = (x * TILE_SIZE + TILE_SIZE // 2,
+                                       y * TILE_SIZE + TILE_SIZE // 2)
+                        font.render_to(surface, rect, coef, WHITE)

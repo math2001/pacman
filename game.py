@@ -17,14 +17,13 @@ pacman_strategies = {
 class Game(Scene):
 
 	def __init__(self, ghost_strategy, pacman_strategy):
-		self.debug = True
 		self.tiles = Tiles()
 		self.tiles.teleports = []
 
 		self.ghosts = []
 
 		self.pacman = None
-		self.paused = True
+		self.paused = False
 
 		ghost_colors = {'r': 'red', 'c': 'cyan', 'p': 'pink', 'y': 'yellow'}
 
@@ -43,8 +42,6 @@ class Game(Scene):
 						                         ghost_colors[char]))
 					elif char not in (SPACE, WALL):
 						raise ValueError(f"Invalid char {char!r} at {x, y}")
-
-		self.ghosts = [self.ghosts[0]]
 
 		if len(self.tiles.teleports) not in (0, 2):
 			raise ValueError("tiles should have 0 or 2 teleport points, got "
@@ -68,8 +65,6 @@ class Game(Scene):
 
 	def ghostturn(self, color, direction):
 		"""Makes the ghost turn"""
-		if color == pygame.Color('red'):
-			print('set ghost direction', color, direction)
 		for ghost in self.ghosts:
 			if ghost.color == color:
 				ghost.wdx, ghost.wdy = direction
