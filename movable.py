@@ -34,7 +34,6 @@ class Movable:
 
         # the representation of the map
         self.tiles = tiles
-        self.frame_count = 0
 
     @property
     def pos(self):
@@ -67,9 +66,8 @@ class Movable:
             raise IndexError(f"Index should be positive, got {self.x + self.wdx}")
         return self.tiles[self.y + self.wdy][self.x + self.wdx]
 
-    def update(self):
-        self.frame_count += 1
-        rest = self.frame_count % self.fpt
+    def update(self, ufc):
+        rest = ufc % self.fpt
 
         if rest == 0:
             self.x += self.dx

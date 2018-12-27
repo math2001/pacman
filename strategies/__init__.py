@@ -12,10 +12,10 @@ class Strategy:
         self.pacman = pacman
         self.ghosts = ghosts
 
-    def render(self, surface):
+    def render(self, surface, rfc):
         pass
 
-    def update(self):
+    def update(self, ufc):
         pass
 
     def handle_event(self, e):

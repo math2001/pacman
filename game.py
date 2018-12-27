@@ -25,6 +25,13 @@ class Game(Scene):
 		self.pacman = None
 		self.paused = False
 
+		# upate frame count (not updated when paused)
+		self.ufc = 0
+		# render frame count (always updated)
+		self.rfc = 0
+
+		# read tile's map and create corresponding objects
+
 		ghost_colors = {'r': 'red', 'c': 'cyan', 'p': 'pink', 'y': 'yellow'}
 
 		with open(f'plans/original.txt') as fo:
@@ -43,6 +50,8 @@ class Game(Scene):
 					elif char not in (SPACE, WALL):
 						raise ValueError(f"Invalid char {char!r} at {x, y}")
 
+		# a few safety checks
+
 		if len(self.tiles.teleports) not in (0, 2):
 			raise ValueError("tiles should have 0 or 2 teleport points, got "
 							 f"{len(self.tiles.teleports)}")
@@ -55,6 +64,8 @@ class Game(Scene):
 		EventManager.on('toggle-pause-game', self.togglepause)
 		EventManager.on('ghost turn', self.ghostturn)
 		EventManager.on('pacman turn', self.pacmanturn)
+
+		# instantiate the strategies
 
 		args = self.tiles, self.pacman, self.ghosts
 		self.ghost_strategy = ghost_strategies[ghost_strategy](*args)
@@ -90,13 +101,15 @@ class Game(Scene):
 	def update(self):
 		if self.paused:
 			return
+		self.ufc += 1
 		for ghost in self.ghosts:
-			ghost.update()
-		self.pacman_strategy.update()
-		self.ghost_strategy.update()
-		self.pacman.update()
+			ghost.update(self.ufc)
+		self.pacman_strategy.update(self.ufc)
+		self.ghost_strategy.update(self.ufc)
+		self.pacman.update(self.ufc)
 
 	def render(self, surface):
+		self.rfc += 1
 		# render the maze
 		# this can be heavily optimized. It can be rendered in __init__ on a 
 		# surface and then just blited.
@@ -106,9 +119,9 @@ class Game(Scene):
 					rect = pygame.Rect((x * TILE_SIZE, y * TILE_SIZE), (TILE_SIZE, TILE_SIZE))
 					pygame.draw.rect(surface, pygame.Color('gray'), rect)
 
-		self.pacman_strategy.render(surface)
-		self.ghost_strategy.render(surface)
+		self.pacman_strategy.render(surface, self.rfc)
+		self.ghost_strategy.render(surface, self.rfc)
 
-		self.pacman.render(surface)
+		self.pacman.render(surface, self.rfc)
 		for ghost in self.ghosts:
-			ghost.render(surface)
+			ghost.render(surface, self.rfc)

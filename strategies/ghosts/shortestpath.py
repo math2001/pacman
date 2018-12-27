@@ -2,7 +2,7 @@ from strategies import Strategy
 import pygame.draw
 from utils import *
 
-DEBUG = 'numbers'
+DEBUG = 'color'
 
 def around(x, y):
     yield x, y
@@ -62,7 +62,7 @@ class ShortestPath(Strategy):
 
         map(movable.x, movable.y, 0)
 
-    def render(self, surface):
+    def render(self, surface, ufc):
         for y, row in enumerate(self.tiles):
             for x, char in enumerate(row):
                 if not is_blocking(char) and self.distances:

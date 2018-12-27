@@ -26,18 +26,17 @@ class Ghost(Movable):
         rect.center = self.surf.get_rect().center
         pygame.draw.rect(self.surf, self.color, rect)
 
-    def render(self, surface):
+    def render(self, surface, rfc):
         center = (self.ax + TILE_SIZE // 2,
                   self.ay + TILE_SIZE // 2)
 
-        # if self.frame_count % 2 == 0:
-        #     self.angle += 10
-        #     self.angle %= 360
-        # if self.frame_count % 3 == 0:
-        #     self.scale[0] += self.scale[1]
-        #     if self.scale[0] > 1.2 or self.scale[0] < .8:
-        #         self.scale[1] = -self.scale[1]
-
+        if rfc % 2 == 0:
+            self.angle += 10
+            self.angle %= 360
+        if rfc % 3 == 0:
+            self.scale[0] += self.scale[1]
+            if self.scale[0] > 1.2 or self.scale[0] < .8:
+                self.scale[1] = -self.scale[1]
 
         surf = pygame.transform.rotozoom(self.surf, self.angle, self.scale[0])
 

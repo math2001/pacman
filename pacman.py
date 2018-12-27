@@ -16,8 +16,8 @@ class Pacman(Movable):
 
 		self.just_tp = False
 
-	def update(self):
-		rest = super().update()
+	def update(self, ufc):
+		rest = super().update(ufc)
 		if self.tile() == TELEPORT:
 			if self.just_tp:
 				self.just_tp = False
@@ -29,7 +29,7 @@ class Pacman(Movable):
 					self.x, self.y = self.tiles.teleports[0]
 				self.just_tp = True
 
-	def render(self, surface):
+	def render(self, surface, rfc):
 		center = (self.ax + TILE_SIZE // 2,
 				  self.ay + TILE_SIZE // 2)
 		pygame.draw.circle(surface, pygame.Color('yellow'), center,
