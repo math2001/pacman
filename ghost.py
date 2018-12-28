@@ -3,7 +3,7 @@ from movable import Movable
 from utils import *
 from random import randint
 
-DEBUG_INFO = 'position'
+DEBUG_INFO = None
 
 class Ghost(Movable):
 

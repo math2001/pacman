@@ -3,7 +3,7 @@ from pygame.locals import *
 from utils import *
 from movable import Movable
 
-DEBUG_INFO = 'position'
+DEBUG_INFO = None
 
 class Pacman(Movable):
 
