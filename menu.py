@@ -17,6 +17,7 @@ class Menu(Scene):
         self.selection = dotdict(pacman='user', ghosts='shortest path')
 
         self.strategies_rects = dotdict(pacman=dotdict(), ghosts=dotdict())
+        EventManager.emit('set mode', (640, 480))
 
     def handle_event(self, e):
         super().handle_event(e)

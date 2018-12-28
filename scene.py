@@ -24,4 +24,4 @@ class Scene:
         pass
 
     def debug_string(self):
-        return self.__class__.__name__
+        return ''

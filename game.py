@@ -62,36 +62,14 @@ class Game(Scene):
         EventManager.on('ghost turn', self.ghostturn)
         EventManager.on('pacman turn', self.pacmanturn)
 
-        EventManager.on('movable reached tile', self.removedot)
+        EventManager.on('movable reached tile', self.eatdot)
 
         # instantiate the strategies
-
         args = self.tiles, self.pacman, self.ghosts
         self.strategy = dotdict(
             pacman=strategies.pacman[pacman_strategy](*args),
             ghosts=strategies.ghosts[ghosts_strategy](*args),
         )
-
-    def togglepause(self):
-        self.paused = not self.paused
-
-    def ghostturn(self, color, direction):
-        """Makes the ghost turn"""
-        for ghost in self.ghosts:
-            if ghost.color == color:
-                ghost.wdx, ghost.wdy = direction
-                return
-        raise ValueError(f"There is no ghost with color {color!r}")
-
-    def removedot(self, movable):
-        if not isinstance(movable, Pacman):
-            return
-        x, y = movable.pos
-        if self.tiles[y][x] == DOT:
-            self.tiles[y][x] = SPACE
-
-    def pacmanturn(self, direction):
-        self.pacman.wdx, self.pacman.wdy = direction
 
     def handle_event(self, e):
         super().handle_event(e)
@@ -111,13 +89,16 @@ class Game(Scene):
             return
         self.ufc += 1
 
+        self.pacman.update(self.ufc)
+
         for ghost in self.ghosts:
             ghost.update(self.ufc)
+            if ghost.pos == self.pacman.pos:
+                self.pacman_lost(ghost)
 
         self.strategy.pacman.update(self.ufc)
         self.strategy.ghosts.update(self.ufc)
 
-        self.pacman.update(self.ufc)
 
     def render(self, surface, rect):
         self.rfc += 1
@@ -140,3 +121,36 @@ class Game(Scene):
         self.pacman.render(surface, self.rfc)
         for ghost in self.ghosts:
             ghost.render(surface, self.rfc)
+
+    def togglepause(self):
+        self.paused = not self.paused
+
+    def ghostturn(self, color, direction):
+        """Makes the ghost turn"""
+        for ghost in self.ghosts:
+            if ghost.color == color:
+                ghost.wdx, ghost.wdy = direction
+                return
+        raise ValueError(f"There is no ghost with color {color!r}")
+
+    def eatdot(self, movable):
+        if not isinstance(movable, Pacman):
+            return
+        x, y = movable.pos
+        if self.tiles[y][x] == DOT:
+            self.tiles[y][x] = SPACE
+
+    def pacmanturn(self, direction):
+        self.pacman.wdx, self.pacman.wdy = direction
+
+    def pacman_lost(self, ghost):
+        # retrieve the name of the pacman and ghost strategy
+        for name, strategy in strategies.pacman.items():
+            if isinstance(self.strategy.pacman, strategy):
+                sp = name
+                break
+        for name, strategy in strategies.ghosts.items():
+            if isinstance(self.strategy.ghosts, strategy):
+                sg = name
+                break
+        EventManager.emit('switch scene', 'pacman lost', ghost.color, sp, sg)

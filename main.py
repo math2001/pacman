@@ -8,6 +8,7 @@ from scene import Scene
 from test import Test
 from game import Game
 from menu import Menu
+from pacmanlost import PacmanLost
 from utils import Screen
 
 fonts = namedtuple('Fonts', 'fancy arcade mono')(
@@ -31,9 +32,10 @@ class App:
         self.debug = True
 
         self.scenes = {
-            "test": Test,
-            "game": Game,
-            "menu": Menu,
+            'test': Test,
+            'game': Game,
+            'menu': Menu,
+            'pacman lost': PacmanLost
         }
 
         Scene.fonts = fonts
@@ -53,7 +55,8 @@ class App:
         self.done = True
     
     def show_debug_infos(self):
-        text = f"<{self.scene.debug_string()}> " \
+        text = f"{self.scene.debug_string()} " \
+               f"{classname(self.scene)} " \
                f"{round(self.clock.get_fps()):2} fps"
         rect = fonts.mono.get_rect(text)
         rect.bottomright = Screen.rect.bottomright
