@@ -5,7 +5,7 @@ import strategies.pacman
 strategies = dotdict(
     pacman={
         "user": strategies.pacman.User,
-        "farthest": None,
+        "furthest": None,
         "greedy": None,
         "joiner": None,
         "adaptive": None

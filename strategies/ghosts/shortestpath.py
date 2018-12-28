@@ -1,5 +1,4 @@
 from strategies.strategy import Strategy
-from scene import Scene
 import pygame.draw
 from utils import *
 
@@ -79,7 +78,7 @@ class ShortestPath(Strategy):
             self.tile.rect.topleft = x * TILE_SIZE, y * TILE_SIZE
             surface.blit(*self.tile)
         elif DEBUG == 'numbers':
-            with fontedit(Scene.fonts.mono) as font:
+            with fontedit(self.fonts.mono) as font:
                 coef = str(self.distances[y][x])
                 rect = font.get_rect(coef)
                 rect.center = (x * TILE_SIZE + TILE_SIZE // 2,

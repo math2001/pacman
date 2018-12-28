@@ -1,5 +1,6 @@
 # TODO: add error screen on exception
 # TODO: transition between scenes
+# TODO: add pastille to eat ghosts
 
 import pygame
 from pygame.locals import *
