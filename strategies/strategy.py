@@ -20,3 +20,6 @@ class Strategy:
 
     def handle_event(self, e):
         pass
+
+    def done(self):
+        pass

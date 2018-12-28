@@ -84,6 +84,21 @@ class EventManager:
         for cb in cbs:
             cb(*args, **kwargs)
 
+    @classmethod
+    def off(cls, event, func=None):
+        try:
+            funcs = cls.events[event]
+        except KeyError:
+            warnings.warn(f"Removing callback from non-existant event {event!r}")
+        if func is None:
+            del cls.events[event]
+            return
+        try:
+            funcs.remove(func)
+        except ValueError:
+            warning.warn(f"Removing non-existant callback from {event!r}. "
+                         f"({len(funcs)} other callback))")
+
 class Tiles(list):
 
     @property

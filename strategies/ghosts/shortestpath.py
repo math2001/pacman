@@ -89,3 +89,6 @@ class ShortestPath(Strategy):
             for x, char in enumerate(row):
                 if not is_blocking(char) and self.distances:
                     self.__render_block(surface, x, y,)
+
+    def done(self):
+        EventManager.off('movable reached tile', self.notify_ghosts)

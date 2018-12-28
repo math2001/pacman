@@ -1,3 +1,5 @@
+# TODO: add error screen on exception
+
 import pygame
 from pygame.locals import *
 from collections import namedtuple
@@ -30,6 +32,7 @@ class App:
         self.clock = pygame.time.Clock()
         self.max_fps = 40
         self.debug = True
+        self.scene = None
 
         self.scenes = {
             'test': Test,
@@ -50,6 +53,8 @@ class App:
         Screen.update()
 
     def switch_scene(self, scene, *args, **kwargs):
+        if self.scene is not None:
+            self.scene.done()
         self.scene = self.scenes[scene](*args, **kwargs)
         return self.scene
     
@@ -67,7 +72,7 @@ class App:
     
     def mainloop(self):
         ''' the basic main loop, handling forceful quit (when the user double
-        clicks the close button)'''
+        clicks the close button) '''
         last_quit = 0
         while not self.done:
             self.clock.tick(self.max_fps)

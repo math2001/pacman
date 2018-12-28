@@ -70,7 +70,6 @@ class Game(Scene):
         EventManager.on('toggle-pause-game', self.togglepause)
         EventManager.on('ghost turn', self.ghostturn)
         EventManager.on('pacman turn', self.pacmanturn)
-
         EventManager.on('movable reached tile', self.eatdot)
 
         # instantiate the strategies
@@ -135,6 +134,15 @@ class Game(Scene):
         for ghost in self.ghosts:
             ghost.render(surface, self.rfc)
 
+    def done(self):
+        EventManager.off('toggle-pause-game', self.togglepause)
+        EventManager.off('ghost turn', self.ghostturn)
+        EventManager.off('pacman turn', self.pacmanturn)
+        EventManager.off('movable reached tile', self.eatdot)
+
+        self.strategy.pacman.done()
+        self.strategy.ghosts.done()
+
     def togglepause(self):
         self.paused = not self.paused
 
@@ -167,4 +175,5 @@ class Game(Scene):
             if isinstance(self.strategy.ghosts, strategy):
                 sg = name
                 break
+
         EventManager.emit('switch scene', 'pacman lost', ghost.color, sp, sg)

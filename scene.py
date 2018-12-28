@@ -1,6 +1,8 @@
 """ This is a base class from which every scenes inherits from
 """
 
+# TODO: manage EventManager from the scene, and remove them automatically
+
 import pygame
 import pygame.freetype
 from utils import EventManager
@@ -25,3 +27,6 @@ class Scene:
 
     def debug_string(self):
         return ''
+
+    def done(self):
+        """ Scene is over. Clean up """
