@@ -13,7 +13,7 @@ START = 's'
 SCORE = '1'
 
 WHITE = 255, 255, 255
-BLACK = 0  , 0  ,   0
+BLACK = 0 , 10 ,  20
 PINK = pygame.Color('pink')
 RED = pygame.Color('red')
 BLUE = pygame.Color('blue')

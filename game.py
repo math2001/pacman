@@ -1,11 +1,13 @@
 import pygame
+from time import time
+
 from scene import Scene
 from utils import *
 from pacman import Pacman
 from ghost import Ghost
 from strategies import strategies
 
-# TODO: put countdown at the beginning of the game
+# TODO: wait a bit when the pacman loses/wins
 
 class Game(Scene):
 
@@ -24,6 +26,13 @@ class Game(Scene):
         self.ufc = 0
         # render frame count (always updated)
         self.rfc = 0
+        self.countdown = time() + 3 # 3 second count down
+        # circle background of the countdown
+        size = 200
+        self.circle = Sprite(pygame.Surface((size, size), pygame.SRCALPHA),
+                             pygame.Rect(0, 0, size, size))
+        pygame.draw.circle(self.circle.surf, BLACK + (150, ), (size // 2, size // 2),
+                           size // 2)
 
         # read tile's map and create corresponding objects
 
@@ -84,6 +93,8 @@ class Game(Scene):
 
     def handle_event(self, e):
         super().handle_event(e)
+        if self.countdown is not None:
+            return
         if e.type == pygame.KEYDOWN:
             if e.key == pygame.K_SPACE:
                 self.togglepause()
@@ -96,10 +107,10 @@ class Game(Scene):
         self.strategy.ghosts.handle_event(e)
 
     def update(self):
-        if self.paused:
+        if self.paused or self.countdown is not None:
             return
-        self.ufc += 1
 
+        self.ufc += 1
         self.pacman.update(self.ufc)
 
         # TODO: only check when a movable has reached a tile
@@ -142,6 +153,21 @@ class Game(Scene):
         self.pacman.render(surface, self.rfc)
         for ghost in self.ghosts:
             ghost.render(surface, self.rfc)
+
+        if self.countdown is not None:
+            time_left = self.countdown - time()
+            if time_left <= 0:
+                self.countdown = None
+                return
+
+            self.circle.rect.center = Screen.rect.center
+            surface.blit(*self.circle)
+
+            with fontedit(self.fonts.arcade, size=100, style=pygame.freetype.STYLE_STRONG) as font:
+                text = str(int(round(time_left)))
+                r = font.get_rect(text)
+                r.center = Screen.rect.center
+                font.render_to(surface, r, text)
 
     def done(self):
         EventManager.off('toggle-pause-game', self.togglepause)

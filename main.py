@@ -85,7 +85,7 @@ class App:
                         return
                     last_quit = time()
                 self.scene.handle_event(event)
-            Screen.surface.fill(0)
+            Screen.surface.fill(BLACK)
             self.scene.update()
             self.scene.render(Screen.surface, Screen.rect)
             if self.debug:
