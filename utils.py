@@ -19,6 +19,9 @@ BLUE = pygame.Color('blue')
 
 Sprite = namedtuple('Sprite', 'surf rect')
 
+def abs(n):
+    return n if n >= 0 else -n
+
 @contextmanager
 def fontedit(font, **kwargs):
     """ Applies some settings to a font, and then removes them """

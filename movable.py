@@ -101,3 +101,8 @@ class Movable:
             rect = font.get_rect(text)
             rect.midbottom = self.ax + TILE_SIZE // 2, self.ay
             font.render_to(surface, rect, text, WHITE, BLACK)
+
+    def collides(self, movable):
+        THRESHOLD = .5 * TILE_SIZE
+        return (abs(self.ax - movable.ax) <= THRESHOLD \
+                and abs(self.ay - movable.ay) <= THRESHOLD)

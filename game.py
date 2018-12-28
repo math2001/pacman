@@ -103,9 +103,10 @@ class Game(Scene):
         # TODO: only check when a movable has reached a tile
         for ghost in self.ghosts:
             ghost.update(self.ufc)
-            if ghost.pos == self.pacman.pos:
+            if ghost.collides(self.pacman):
                 self.pacman_lost(ghost)
 
+        # TODO: only check when a movable has reached a tile
         if self.score.current == self.score.max:
             EventManager.emit('switch scene', 'ghosts lost')
 
