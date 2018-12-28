@@ -21,14 +21,12 @@ class Menu(Scene):
 
     def handle_event(self, e):
         super().handle_event(e)
+        if e.type == KEYDOWN and e.key == K_SPACE:
+            self.go_to_game()
+
         if e.type == MOUSEBUTTONDOWN and e.button == 1:
             if self.go.rect.collidepoint(e.pos):
-                # TODO: find out the 2 strategies
-                # TODO: no strategy selected = error message
-                EventManager.emit('switch scene', 'game',
-                                  self.selection.pacman,
-                                  self.selection.ghosts)
-
+                self.go_to_game()
             for name, rect in self.strategies_rects.pacman.items():
                 if rect.collidepoint(e.pos):
                     self.selection.pacman = name
@@ -41,6 +39,11 @@ class Menu(Scene):
                         self.selection.ghosts = name
                         break
 
+    def go_to_game(self):
+        # TODO: no strategy selected = error message
+        EventManager.emit('switch scene', 'game',
+                          self.selection.pacman,
+                          self.selection.ghosts)
 
     def render(self, surface, rect):
 
