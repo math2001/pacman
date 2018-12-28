@@ -1,8 +1,9 @@
 from strategies.strategy import Strategy
+from scene import Scene
 import pygame.draw
 from utils import *
 
-DEBUG = None
+DEBUG = 'colors'
 
 def around(x, y):
     yield x, y
@@ -67,22 +68,23 @@ class ShortestPath(Strategy):
         map(movable.x, movable.y, 0)
 
     def __render_block(self, surface, x, y):
-        if DEBUG == 'color':
-            if self.distances[y][x] == float('inf'):
-                color = 100, 50, 50
-            else:
-                color = (self.distances[y][x] * 5 % 255, ) * 3
-
-            color = pygame.Color(*color, 100)
+        if DEBUG == 'colors':
+            color = pygame.Color(100, 50, 50, 128)
+            if self.distances[y][x] != float('inf'):
+                color.hsla = (
+                    int(self.distances[y][x] * 4) % 360,
+                    50, 50, 50
+                ) 
             self.tile.surf.fill(color)
             self.tile.rect.topleft = x * TILE_SIZE, y * TILE_SIZE
             surface.blit(*self.tile)
         elif DEBUG == 'numbers':
-            coef = str(self.distances[y][x])
-            rect = font.get_rect(coef)
-            rect.center = (x * TILE_SIZE + TILE_SIZE // 2,
-                           y * TILE_SIZE + TILE_SIZE // 2)
-            font.render_to(surface, rect, coef, WHITE)
+            with fontedit(Scene.fonts.mono) as font:
+                coef = str(self.distances[y][x])
+                rect = font.get_rect(coef)
+                rect.center = (x * TILE_SIZE + TILE_SIZE // 2,
+                               y * TILE_SIZE + TILE_SIZE // 2)
+                font.render_to(surface, rect, coef, WHITE)
 
     def render(self, surface, rect, ufc):
         for y, row in enumerate(self.tiles):
