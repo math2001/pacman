@@ -5,7 +5,6 @@ from pacman import Pacman
 from ghost import Ghost
 from strategies import strategies
 
-# TODO: display score in the middle of the board
 # TODO: put countdown at the beginning of the game
 
 class Game(Scene):
@@ -30,7 +29,7 @@ class Game(Scene):
 
         ghost_colors = {'r': 'red', 'c': 'cyan', 'p': 'pink', 'y': 'yellow'}
 
-        self.score = dotdict(current=0, max=0)
+        self.score = dotdict(current=0, max=0, center=None)
 
         with open(f'plans/original.txt') as fo:
             dx, dy = intall(next(fo).split(','))
@@ -51,6 +50,10 @@ class Game(Scene):
                     elif char == DOT:
                         fline.append(char)
                         self.score.max += 1
+                    elif char == SCORE:
+                        self.score.center = (x * TILE_SIZE,
+                                             y * TILE_SIZE + TILE_SIZE // 2)
+                        fline.append(SPACE)
                     elif char not in (SPACE, WALL):
                         raise ValueError(f"Invalid char {char!r} at {x, y}")
                     else:
@@ -126,6 +129,12 @@ class Game(Scene):
                     center = (x * TILE_SIZE + TILE_SIZE // 2,
                               y * TILE_SIZE + TILE_SIZE // 2)
                     pygame.draw.circle(surface, WHITE, center, TILE_SIZE // 10)
+
+        with fontedit(self.fonts.arcade, size=30) as font:
+            text = f'{self.score.max - self.score.current}'
+            r = font.get_rect(text)
+            r.center = self.score.center
+            font.render_to(surface, r, text)
 
         self.strategy.pacman.render(surface, rect, self.rfc)
         self.strategy.ghosts.render(surface, rect, self.rfc)

@@ -10,6 +10,7 @@ SPACE = ' '
 DOT = '.'
 TELEPORT = 't'
 START = 's'
+SCORE = '1'
 
 WHITE = 255, 255, 255
 BLACK = 0  , 0  ,   0

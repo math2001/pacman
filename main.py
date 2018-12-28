@@ -1,4 +1,5 @@
 # TODO: add error screen on exception
+# TODO: transition between scenes
 
 import pygame
 from pygame.locals import *
@@ -47,6 +48,7 @@ class App:
         EventManager.emit('switch scene', 'menu')
 
         pygame.key.set_repeat(400, 50)
+        pygame.display.set_caption('Pacman')
 
     def set_mode(self, *args, **kwargs):
         self.window = pygame.display.set_mode(*args, **kwargs)
