@@ -43,6 +43,8 @@ class App:
         EventManager.emit('set mode', (640, 480))
         EventManager.emit('switch scene', 'menu')
 
+        pygame.key.set_repeat(400, 50)
+
     def set_mode(self, *args, **kwargs):
         self.window = pygame.display.set_mode(*args, **kwargs)
         Screen.update()
