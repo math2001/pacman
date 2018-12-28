@@ -27,6 +27,8 @@ class Game(Scene):
 
         ghost_colors = {'r': 'red', 'c': 'cyan', 'p': 'pink', 'y': 'yellow'}
 
+        self.score = dotdict(current=0, max=0)
+
         with open(f'plans/original.txt') as fo:
             dx, dy = intall(next(fo).split(','))
             for y, line in enumerate(fo):
@@ -42,7 +44,11 @@ class Game(Scene):
                         self.ghosts.append(Ghost(x, y, 0, 0, self.tiles,
                                                  ghost_colors[char]))
                         fline.append(DOT)
-                    elif char not in (SPACE, DOT, WALL):
+                        self.score.max += 1
+                    elif char == DOT:
+                        fline.append(char)
+                        self.score.max += 1
+                    elif char not in (SPACE, WALL):
                         raise ValueError(f"Invalid char {char!r} at {x, y}")
                     else:
                         fline.append(char)
@@ -91,14 +97,17 @@ class Game(Scene):
 
         self.pacman.update(self.ufc)
 
+        # TODO: only check when a movable has reached a tile
         for ghost in self.ghosts:
             ghost.update(self.ufc)
             if ghost.pos == self.pacman.pos:
                 self.pacman_lost(ghost)
 
+        if self.score.current == self.score.max:
+            EventManager.emit('switch scene', 'ghosts lost')
+
         self.strategy.pacman.update(self.ufc)
         self.strategy.ghosts.update(self.ufc)
-
 
     def render(self, surface, rect):
         self.rfc += 1
@@ -139,6 +148,7 @@ class Game(Scene):
         x, y = movable.pos
         if self.tiles[y][x] == DOT:
             self.tiles[y][x] = SPACE
+            self.score.current += 1
 
     def pacmanturn(self, direction):
         self.pacman.wdx, self.pacman.wdy = direction
