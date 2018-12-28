@@ -103,11 +103,11 @@ class Game(Scene):
         for ghost in self.ghosts:
             ghost.update(self.ufc)
             if ghost.collides(self.pacman):
-                self.pacman_lost(ghost)
+                self.end(winner='ghosts')
 
         # TODO: only check when a movable has reached a tile
         if self.score.current == self.score.max:
-            EventManager.emit('switch scene', 'ghosts lost')
+            self.end(winner='pacman')
 
         self.strategy.pacman.update(self.ufc)
         self.strategy.ghosts.update(self.ufc)
@@ -165,7 +165,7 @@ class Game(Scene):
     def pacmanturn(self, direction):
         self.pacman.wdx, self.pacman.wdy = direction
 
-    def pacman_lost(self, ghost):
+    def end(self, winner):
         # retrieve the name of the pacman and ghost strategy
         for name, strategy in strategies.pacman.items():
             if isinstance(self.strategy.pacman, strategy):
@@ -176,4 +176,4 @@ class Game(Scene):
                 sg = name
                 break
 
-        EventManager.emit('switch scene', 'pacman lost', ghost.color, sp, sg)
+        EventManager.emit('switch scene', 'end', winner, sp, sg)

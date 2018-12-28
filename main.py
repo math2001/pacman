@@ -10,7 +10,7 @@ from scene import Scene
 from test import Test
 from game import Game
 from menu import Menu
-from pacmanlost import PacmanLost
+from end import End
 from utils import Screen
 
 fonts = namedtuple('Fonts', 'fancy arcade mono')(
@@ -38,7 +38,7 @@ class App:
             'test': Test,
             'game': Game,
             'menu': Menu,
-            'pacman lost': PacmanLost
+            'end': End
         }
 
         Scene.fonts = fonts

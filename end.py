@@ -2,11 +2,11 @@ from pygame.locals import *
 from scene import Scene
 from utils import *
 
-class PacmanLost(Scene):
+class End(Scene):
 
-    def __init__(self, ghost_color, pacman_strategy, ghosts_strategy):
+    def __init__(self, winner, pacman_strategy, ghosts_strategy):
         super().__init__()
-        self.ghost_color = ghost_color
+        self.winner = winner
         self.pacman_strategy = pacman_strategy
         self.ghosts_strategy = ghosts_strategy
 
@@ -19,7 +19,7 @@ class PacmanLost(Scene):
 
     def render(self, surf, srect):
         with fontedit(self.fonts.fancy, size=40) as font:
-            text = 'The pacman lost'
+            text = f'the {self.winner} won!'
             r = font.get_rect(text)
             r.center = srect.center
             r.top -= 100
@@ -27,7 +27,10 @@ class PacmanLost(Scene):
             bottom = r.bottom
 
         with fontedit(self.fonts.mono, size=15) as font:
-            text = f'{self.ghosts_strategy!r} seems to beat {self.pacman_strategy!r}...'
+            a, b = self.pacman_strategy, self.ghosts_strategy
+            if self.winner == 'ghosts':
+                a, b = b, a
+            text = f'{a!r} seems to beat {b!r}'
             r = font.get_rect(text)
             r.midtop = srect.centerx, bottom + 40
             font.render_to(surf, r, text)
