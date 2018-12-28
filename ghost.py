@@ -3,7 +3,7 @@ from movable import Movable
 from utils import *
 from random import randint
 
-DISPLAY_DIRECTION = False
+DEBUG_INFO = 'position'
 
 class Ghost(Movable):
 
@@ -40,8 +40,5 @@ class Ghost(Movable):
 
         surface.blit(surf, surf.get_rect(center=center))
 
-        if DISPLAY_DIRECTION:
-            text = str((self.dx, self.dy))
-            rect = font.get_rect(text)
-            rect.midbottom = center[0], self.ay
-            font.render_to(surface, rect, text, WHITE, BLACK)
+        if DEBUG_INFO == 'position':
+            self.show_debug(surface, self.pos)

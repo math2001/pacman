@@ -1,6 +1,7 @@
 """A movable is a tile that can move (ghost or pacman)"""
 
 from utils import *
+from scene import Scene
 
 def voidnonblocking(fn):
     """This decorator allows movables to got outside of the map (anything
@@ -93,3 +94,10 @@ class Movable:
             self.dx = self.dy = 0
             self.wdx = self.wdy = None
         return rest
+
+    def show_debug(self, surface, text):
+        with fontedit(Scene.fonts.mono) as font:
+            text = str(text)
+            rect = font.get_rect(text)
+            rect.midbottom = self.ax + TILE_SIZE // 2, self.ay
+            font.render_to(surface, rect, text, WHITE, BLACK)

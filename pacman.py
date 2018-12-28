@@ -3,6 +3,8 @@ from pygame.locals import *
 from utils import *
 from movable import Movable
 
+DEBUG_INFO = 'position'
+
 class Pacman(Movable):
 
     """Pacman is basically a regular movable, except it can teleport"""
@@ -32,3 +34,5 @@ class Pacman(Movable):
                   self.ay + TILE_SIZE // 2)
         pygame.draw.circle(surface, pygame.Color('yellow'), center,
                            TILE_SIZE // 2)
+        if DEBUG_INFO == 'position':
+            self.show_debug(surface, self.pos)

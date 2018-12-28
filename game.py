@@ -5,6 +5,9 @@ from pacman import Pacman
 from ghost import Ghost
 from strategies import strategies
 
+# TODO: display score in the middle of the board
+# TODO: put countdown at the beginning of the game
+
 class Game(Scene):
 
     def __init__(self, pacman_strategy, ghosts_strategy):
