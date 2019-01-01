@@ -26,12 +26,14 @@ class Game(Scene):
         self.ufc = 0
         # render frame count (always updated)
         self.rfc = 0
-        self.countdown = time() + 3 # 3 second count down
+        self.countdown = time() + 0 # 3 second count down
         # circle background of the countdown
         size = 200
         self.circle = Sprite(pygame.Surface((size, size), pygame.SRCALPHA),
                              pygame.Rect(0, 0, size, size))
-        pygame.draw.circle(self.circle.surf, BLACK + (150, ), (size // 2, size // 2),
+        black = pygame.Color('black')
+        black.a = 150
+        pygame.draw.circle(self.circle.surf, black, (size // 2, size // 2),
                            size // 2)
 
         # read tile's map and create corresponding objects

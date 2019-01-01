@@ -5,15 +5,16 @@ import strategies.pacman
 strategies = dotdict(
     pacman={
         "user": strategies.pacman.User,
-        "furthest": None,
-        "greedy": None,
-        "joiner": None,
-        "adaptive": None
+        "furthest": strategies.pacman.Furthest,
+        # "greedy": None,
+        # "joiner": None,
+        # "adaptive": None
     },
     ghosts={
         "shortest path": strategies.ghosts.ShortestPath,
-        "random": None,
-        "blocking": None,
-        "lonely": None,
+        "static": strategies.ghosts.Static,
+        # "random": None,
+        # "blocking": None,
+        # "lonely": None,
     }
 )
